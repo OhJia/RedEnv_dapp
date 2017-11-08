@@ -5,14 +5,16 @@ contract RedEnvelope {
 	struct Envelope {
 		uint id;
 		bytes32 link;
-        	address creatorAddress; 
-        	uint startTime;
-        	uint initialBalance; 
-        	uint remainingBalance;    
-        	mapping (address => uint) claims; 
-    	}
+		address creatorAddress; 
+		uint startTime;
+		uint initialBalance; 
+		uint remainingBalance; 
+		uint totalClaims;   
+		mapping (address => uint) claims; 
+	}
 
-	mapping (bytes32 => Envelope) envelopes;
+	mapping (uint => Envelope) envelopes;
+	//mapping (address => bytes32) envHash;
 
 	uint public envelopeIndex; 
 	
@@ -22,7 +24,7 @@ contract RedEnvelope {
 
 	// Create an envelope by paying ether
 	// Envelope is identified from envelopes by a unique link (hash)
-	function buyEnvelope(uint _startTime) payable public returns (bytes32, bytes32, bytes32, address, uint) {
+	function buyEnvelope(uint _startTime) payable public returns (bool) {
 		
 		require (msg.value > 0);
 
@@ -34,42 +36,48 @@ contract RedEnvelope {
 		Envelope memory env = Envelope(
 			envelopeIndex,
 			envLink,
-        		msg.sender, 
-        		_startTime,
-        		msg.value, 
-        		msg.value
+        	msg.sender, 
+        	_startTime,
+        	msg.value, 
+        	msg.value,
+        	0
 		);
 
-		envelopes[envLink] = env;
+		envelopes[envelopeIndex] = env;
 
-        	return (nonce, envLink, envelopes[envLink].link, envelopes[envLink].creatorAddress, envelopes[envLink].initialBalance);
+    	return true;
 	}
 
 	// Get an envelope's data using the unique link
-	function getEnvelopeInfo(bytes32 _envelopeLink) public returns (uint, address, uint, uint, uint) {
-		Envelope memory env = envelopes[_envelopeLink];
+	function getEnvelopeInfo(uint _envIndex) public returns (uint, bytes32, address, uint, uint, uint) {
+		Envelope memory env = envelopes[_envIndex];
     
-    		return (envelopes[_envelopeLink].id, envelopes[_envelopeLink].creatorAddress, envelopes[_envelopeLink].startTime, envelopes[_envelopeLink].initialBalance, envelopes[_envelopeLink].remainingBalance);
+		return (env.id, env.link, env.creatorAddress, env.startTime, env.initialBalance, env.remainingBalance);
 	}
 
 	// Get an envelope's remaining balance using the unique link
-	function getRemainingBalance(bytes32 _envelopeLink) public returns (uint) {
+	function getRemainingBalance(uint _envelopeLink) public returns (uint) {
 		Envelope memory env = envelopes[_envelopeLink];
 
 		return env.remainingBalance;
 	}
 
 	// Claim a random fraction of the ether in the envelope
-	function claim(bytes32 _envelopeLink) public {
+	function claim(uint _envelopeLink) public {
 		Envelope storage env = envelopes[_envelopeLink];
 
 		require (env.remainingBalance > 0);
 		uint claimAmount = generateClaimAmount(env.remainingBalance);
 		env.remainingBalance -= claimAmount;
 
-		env.claims[msg.sender] = claimAmount;
-
 		msg.sender.transfer(claimAmount);
+		env.totalClaims += 1;
+		env.claims[msg.sender] = claimAmount;
+	}
+
+	function totalClaims(uint _envIndex) public returns (uint) {
+		Envelope memory env = envelopes[_envIndex];
+		return env.totalClaims;
 	}
 
 	function generateClaimAmount(uint _remainingBalance) private constant returns (uint) {
