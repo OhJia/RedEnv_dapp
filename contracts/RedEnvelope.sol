@@ -20,6 +20,8 @@ contract RedEnvelope {
 		envelopeIndex = 0;
 	}
 
+	// Create an envelope by paying ether
+	// Envelope is identified from envelopes by a unique link (hash)
 	function buyEnvelope(uint _startTime) payable public returns (bytes32, bytes32, bytes32, address, uint) {
 		
 		require (msg.value > 0);
@@ -43,18 +45,21 @@ contract RedEnvelope {
         return (nonce, envLink, envelopes[envLink].link, envelopes[envLink].creatorAddress, envelopes[envLink].initialBalance);
     }
 
+    // Get an envelope's data using the unique link
 	function getEnvelopeInfo(bytes32 _envelopeLink) public returns (uint, address, uint, uint, uint) {
 		Envelope memory env = envelopes[_envelopeLink];
     
     	return (envelopes[_envelopeLink].id, envelopes[_envelopeLink].creatorAddress, envelopes[_envelopeLink].startTime, envelopes[_envelopeLink].initialBalance, envelopes[_envelopeLink].remainingBalance);
 	}
 
+	// Get an envelope's remaining balance using the unique link
 	function getRemainingBalance(bytes32 _envelopeLink) public returns (uint) {
 		Envelope memory env = envelopes[_envelopeLink];
 
 		return env.remainingBalance;
 	}
 
+	// Claim a random fraction of the ether in the envelope
 	function claim(bytes32 _envelopeLink) public {
 		Envelope storage env = envelopes[_envelopeLink];
 
