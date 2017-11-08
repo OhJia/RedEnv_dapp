@@ -5,17 +5,17 @@ contract RedEnvelope {
 	struct Envelope {
 		uint id;
 		bytes32 link;
-        address creatorAddress; 
-        uint startTime;
-        uint initialBalance; 
-        uint remainingBalance;    
-        mapping (address => uint) claims; 
-    }
+        	address creatorAddress; 
+        	uint startTime;
+        	uint initialBalance; 
+        	uint remainingBalance;    
+        	mapping (address => uint) claims; 
+    	}
 
-    mapping (bytes32 => Envelope) envelopes;
+	mapping (bytes32 => Envelope) envelopes;
 
-    uint public envelopeIndex; 
-
+	uint public envelopeIndex; 
+	
 	function RedEnvelope() public {
 		envelopeIndex = 0;
 	}
@@ -34,22 +34,22 @@ contract RedEnvelope {
 		Envelope memory env = Envelope(
 			envelopeIndex,
 			envLink,
-        	msg.sender, 
-        	_startTime,
-        	msg.value, 
-        	msg.value
+        		msg.sender, 
+        		_startTime,
+        		msg.value, 
+        		msg.value
 		);
 
 		envelopes[envLink] = env;
 
-        return (nonce, envLink, envelopes[envLink].link, envelopes[envLink].creatorAddress, envelopes[envLink].initialBalance);
-    }
+        	return (nonce, envLink, envelopes[envLink].link, envelopes[envLink].creatorAddress, envelopes[envLink].initialBalance);
+	}
 
-    // Get an envelope's data using the unique link
+	// Get an envelope's data using the unique link
 	function getEnvelopeInfo(bytes32 _envelopeLink) public returns (uint, address, uint, uint, uint) {
 		Envelope memory env = envelopes[_envelopeLink];
     
-    	return (envelopes[_envelopeLink].id, envelopes[_envelopeLink].creatorAddress, envelopes[_envelopeLink].startTime, envelopes[_envelopeLink].initialBalance, envelopes[_envelopeLink].remainingBalance);
+    		return (envelopes[_envelopeLink].id, envelopes[_envelopeLink].creatorAddress, envelopes[_envelopeLink].startTime, envelopes[_envelopeLink].initialBalance, envelopes[_envelopeLink].remainingBalance);
 	}
 
 	// Get an envelope's remaining balance using the unique link
