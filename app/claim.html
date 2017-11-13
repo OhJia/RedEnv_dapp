@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Red Envelope - Spread decentralized fortune</title>
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+        <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+    </head>
+    <body class="container" id="claim-page">
+        <h1>Red Envelope ETH</h1>
+
+        <div class="table-responsive">
+            <!-- Enter passcode for envelope -->
+            <div style="display: none;" class="alert alert-success" id="envelope-not-found"></div>
+            <div id="unlock-envelope">
+                <h2>Claim an envelope</h2>
+                <div style="display: none;" class="alert alert-success" id="passcode-not-match"></div>
+                <form id="claim-enter-passcode" action="">
+                  <input type="text" id="claim-passcode" placeholder="Enter the envelope passcode" required="required">
+                  <input type="submit" value="Enter">
+                </form>
+            </div>
+            
+            <!-- Claim envelope -->
+            <div class="row" id="claim-envelope"></div>
+
+            <!-- Claim info -->
+            <div class="row" id="claim-info"></div>
+            <div class="row" id="claimed-envelope-info"></div>
+        </div>
+    </body>
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
+    <script src="app.js"></script>
+</html>
+
+
+
+
+           
+

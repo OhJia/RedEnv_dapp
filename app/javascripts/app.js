@@ -1,93 +1,279 @@
-// Import the page's CSS. Webpack will know what to do with it.
 import "../stylesheets/app.css";
 
-// Import libraries we need.
 import { default as Web3} from 'web3';
 import { default as contract } from 'truffle-contract'
 
-// Import our contract artifacts and turn them into usable abstractions.
-import metacoin_artifacts from '../../build/contracts/MetaCoin.json'
+// Import contract artifacts and turn them into usable abstractions.
+import redenvelope_artifacts from '../../build/contracts/RedEnvelope.json'
 
-// MetaCoin is our usable abstraction, which we'll use through the code below.
-var MetaCoin = contract(metacoin_artifacts);
+var RedEnvelope = contract(redenvelope_artifacts);
 
-// The following code is simple to show off interacting with your contracts.
-// As your needs grow you will likely need to change its form and structure.
-// For application bootstrapping, check out window.addEventListener below.
-var accounts;
-var account;
 
 window.App = {
   start: function() {
     var self = this;
 
-    // Bootstrap the MetaCoin abstraction for Use.
-    MetaCoin.setProvider(web3.currentProvider);
+    RedEnvelope.setProvider(web3.currentProvider);
+    console.log("App started and web3 provider set.")
 
-    // Get the initial account balance so it can be displayed.
-    web3.eth.getAccounts(function(err, accs) {
-      if (err != null) {
-        alert("There was an error fetching your accounts.");
-        return;
+    /* 
+    * On create page
+    */ 
+    $("#create-envelope").submit(function(event) {
+       const req = {
+        amount: $('#amount').val(),
+        password: $('#password').val(),
+       };
+       
+       event.preventDefault();
+
+       App.buyEnvelope(req);
+    });
+
+    /* 
+    * if on claim page
+    */ 
+    let claimEnvIndex;
+
+    if ($("#claim-page").length > 0) {
+      //This is product details page
+      let envIndex = new URLSearchParams(window.location.search).get('env-id');
+      //renderProductDetails(productId);
+      console.log("On claim page");
+      $("#passcode-not-match").hide();
+      
+      // If this is a query
+      if (envIndex) { 
+        claimEnvIndex = envIndex;
+        checkIndex(claimEnvIndex);
+      } else {
+        window.location.replace("/index.html");
       }
+    }
 
-      if (accs.length == 0) {
-        alert("Couldn't get any accounts! Make sure your Ethereum client is configured correctly.");
-        return;
-      }
+    /* 
+    * Submit passcode to claim envelope
+    */ 
+    $("#claim-enter-passcode").submit(function(event) {
+       const req = {
+        claimPasscode: $('#claim-passcode').val(),
+        claimIndex: claimEnvIndex
+       };
+       console.log(req);
 
-      accounts = accs;
-      account = accounts[0];
+       event.preventDefault();
 
-      self.refreshBalance();
+       App.checkPasscode(req);
+    });
+    
+  },
+
+  // Create envelope
+  buyEnvelope: function(params) {
+    var self = this;
+
+    let amountToBuy = params.amount;
+    let amountInWei = web3.toWei(amountToBuy, 'ether');   
+    let password = params.password.toString();
+    // let currentTime = new Date() / 1000;
+    console.log("params:");
+    console.log(params);
+
+    $("#buy-msg").html("Making your envelope. Please wait.");
+
+    RedEnvelope.deployed().then(function(i) {
+      i.buyEnvelope(password, {from: web3.eth.accounts[0], value: amountInWei}).then(function(f) {
+        $("#buy-msg").html("");
+        generateEnvelopeLink();
+      }).catch(function(e) {
+        console.log(e);
+        self.setStatus("Error sending coin; see log.");
+      });
     });
   },
 
-  setStatus: function(message) {
-    var status = document.getElementById("status");
-    status.innerHTML = message;
-  },
 
-  refreshBalance: function() {
+  // Claim
+
+  checkPasscode: function(params) {
     var self = this;
 
-    var meta;
-    MetaCoin.deployed().then(function(instance) {
-      meta = instance;
-      return meta.getBalance.call(account, {from: account});
-    }).then(function(value) {
-      var balance_element = document.getElementById("balance");
-      balance_element.innerHTML = value.valueOf();
-    }).catch(function(e) {
-      console.log(e);
-      self.setStatus("Error getting balance; see log.");
+    let passcode = params.claimPasscode;
+    let index = params.claimIndex;
+    console.log(passcode);
+    console.log(index);
+
+    let matched = false;
+
+    RedEnvelope.deployed().then(function(i) {
+      i.checkPassword(passcode, index, {from: web3.eth.accounts[0]}).then(function(f) {
+        i.getMatchPassword.call(index).then(function(f) {
+          console.log("password matched: ", f);
+          matched = f;
+          if (matched) {
+            $("#unlock-envelope").hide();
+            $("#passcode-not-match").html("");
+            renderEnvelopeClaim(index);
+          } else {
+            console.log("Passcode doesn't match. Try again.");
+            $("#passcode-not-match").show();
+            $("#passcode-not-match").html("Passcode doesn't match. Try again.");
+          }
+        })
+      }).catch(function(e) {
+        console.log(e);
+        self.setStatus("Error sending coin; see log.");
+      });
     });
   },
 
-  sendCoin: function() {
+  claim: function(index) {
     var self = this;
+    let claimIndex = index;
 
-    var amount = parseInt(document.getElementById("amount").value);
-    var receiver = document.getElementById("receiver").value;
-
-    this.setStatus("Initiating transaction... (please wait)");
-
-    var meta;
-    MetaCoin.deployed().then(function(instance) {
-      meta = instance;
-      return meta.sendCoin(receiver, amount, {from: account});
-    }).then(function() {
-      self.setStatus("Transaction complete!");
-      self.refreshBalance();
-    }).catch(function(e) {
-      console.log(e);
-      self.setStatus("Error sending coin; see log.");
+    RedEnvelope.deployed().then(function(i) {
+      i.claim(claimIndex, {from: web3.eth.accounts[0]}).then(function(f) {
+        $("#claim-envelope").hide();
+        renderClaimedEnvelope(claimIndex);
+        renderClaimInfo(claimIndex, web3.eth.accounts[0]);
+      }).catch(function(e) {
+        console.log(e);
+        self.setStatus("Error sending coin; see log.");
+      });
     });
   }
+
 };
 
+/***************************************************
+  RENDER ENVELOPE INFO AFTER CREATE
+
+****************************************************/
+function generateEnvelopeLink() {
+  RedEnvelope.deployed().then(function(i) {
+    i.envelopeIndex.call().then(function(index) {
+      const link = "?env-id=" + index;
+      $("#envelope-link").append(link);
+      renderEnvelope(index);
+    });
+  })
+}
+
+function renderEnvelope(index) {
+  RedEnvelope.deployed().then(function(i) {
+    i.getEnvelopeInfo.call(index).then(function(p) {
+      $("#envelope-info").append(buildEnvelope(p));
+    });
+  })
+}
+
+function buildEnvelope(env) {
+  console.log(env);
+  let node = $("<div/>");
+  node.addClass("col-sm-3 text-center col-margin-bottom-1");
+  node.append("<div>Red Env #" + env[0] + "</div>");
+  node.append("<div>From: " + env[1]+ "</div>");
+  node.append("<div>Created at: " + env[2]+ "</div>");
+  node.append("<div>Initial balance: " + env[3]+ "</div>");
+  node.append("<div>Remaining balance: " + env[4] + "</div>");
+  return node;
+}
+
+
+/***************************************************
+  RENDER ENVELOPE INFO TO CLAIM
+
+****************************************************/
+function checkIndex(id) {
+  console.log("submitted index: ", id);
+  RedEnvelope.deployed().then(function(i) {
+    i.envelopeIndex.call().then(function(index) {
+      console.log("total envelope index: ", parseInt(index));
+      if (id > parseInt(index)) {
+        console.log("envelope not found");
+        $("#unlock-envelope").hide();
+        $("#envelope-not-found").show();
+        $("#envelope-not-found").html("This envelope is not found. Try a different link.");
+      } else {
+        console.log("found");
+        $("#envelope-not-found").hide();
+        $("#unlock-envelope").show();
+      }
+    });
+  })
+}
+
+function renderEnvelopeClaim(index) {
+  console.log("rendering env #: ", index);
+  $("#claim-envelope").show();
+  RedEnvelope.deployed().then(function(i) {
+    i.getEnvelopeInfo.call(index).then(function(p) {
+      console.log(p);
+      $("#claim-envelope").append(buildClaimEnvelope(p));
+    });
+  })
+}
+
+function buildClaimEnvelope(env) {
+  console.log(env);
+  let node = $("<div/>");
+  node.addClass("col-sm-3 text-center col-margin-bottom-1");
+  node.append("<div><h2>Red Env #" + env[0] + "</h2></div>");
+  node.append("<div>From: " + env[1]+ "</div>");
+  node.append("<div>Created at: " + env[2]+ "</div>");
+  node.append("<div>Initial balance: " + env[3]+ "</div>");
+  node.append("<div>Remaining balance: " + env[4] + "</div>");
+  node.append("<div><button id='claim' onclick='App.claim(" + env[0] + ")'>Claim</button></div>");
+  return node;
+}
+
+/***************************************************
+  RENDER CLAIMED ENVELOPE & CLAIM INFO
+
+****************************************************/
+
+function renderClaimedEnvelope(index) {
+  console.log("rendering claim #: ", index);
+  $("#claimed-envelope-info").show();
+  RedEnvelope.deployed().then(function(i) {
+    i.getEnvelopeInfo.call(index).then(function(p) {
+      console.log(p);
+      $("#claimed-envelope-info").append(buildClaimedEnvelope(p));
+    });
+  })
+}
+
+function buildClaimedEnvelope(env) {
+  console.log(env);
+  let node = $("<div/>");
+  node.addClass("col-sm-3 text-center col-margin-bottom-1");
+  node.append("<div><h2>Red Env #" + env[0] + "</h2></div>");
+  node.append("<div>From: " + env[1]+ "</div>");
+  node.append("<div>Created at: " + env[2]+ "</div>");
+  node.append("<div>Initial balance: " + env[3]+ "</div>");
+  node.append("<div>Remaining balance: " + env[4] + "</div>");
+  return node;
+}
+
+function renderClaimInfo(index, address) {
+  $("#claim-info").show();
+  RedEnvelope.deployed().then(function(i) {
+    i.getClaimInfo.call(index, address).then(function(p) {
+      console.log(p);
+      let node = $("<div/>");
+      node.addClass("col-sm-3 text-center col-margin-bottom-1");
+      node.append("<div><h3>You claimed " + p + ".</h3></div>");
+      $("#claim-info").append(node);
+    });
+  })
+}
+
+/***************************************************
+  ON LOAD
+  
+****************************************************/
 window.addEventListener('load', function() {
-  // Checking if Web3 has been injected by the browser (Mist/MetaMask)
+  //Checking if Web3 has been injected by the browser (Mist/MetaMask)
   if (typeof web3 !== 'undefined') {
     console.warn("Using web3 detected from external source. If you find that your accounts don't appear or you have 0 MetaCoin, ensure you've configured that source properly. If using MetaMask, see the following link. Feel free to delete this warning. :) http://truffleframework.com/tutorials/truffle-and-metamask")
     // Use Mist/MetaMask's provider
