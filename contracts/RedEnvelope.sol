@@ -51,7 +51,7 @@ contract RedEnvelope {
 	}
 
 	
-	// Claim a random fraction of the ether in the envelope
+	// Check passcode
 
 	function checkPassword(string _password, uint _envelopeIndex) public {
 		address creator = textToAddress[_password];

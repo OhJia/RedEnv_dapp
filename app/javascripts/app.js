@@ -79,11 +79,12 @@ window.App = {
     console.log("params:");
     console.log(params);
 
-    $("#buy-msg").html("Making your envelope. Please wait.");
+    //$("#buy-msg").html("Making your envelope. Please wait.");
 
     RedEnvelope.deployed().then(function(i) {
       i.buyEnvelope(password, {from: web3.eth.accounts[0], value: amountInWei}).then(function(f) {
-        $("#buy-msg").html("");
+        //$("#buy-msg").html("");
+        $("#container-create").hide();
         generateEnvelopeLink();
       }).catch(function(e) {
         console.log(e);
@@ -149,14 +150,29 @@ window.App = {
   RENDER ENVELOPE INFO AFTER CREATE
 
 ****************************************************/
-function generateEnvelopeLink() {
+function generateEnvelopeLink() {  
+  //$("#container-envelope").show();
   RedEnvelope.deployed().then(function(i) {
     i.envelopeIndex.call().then(function(index) {
       const link = "?env-id=" + index;
-      $("#envelope-link").append(link);
-      renderEnvelope(index);
+      $("#envelope-link").append(buildEnvelopeLink(link));
+      //renderEnvelope(index);
     });
   })
+}
+
+function buildEnvelopeLink(link) {
+
+  let node = $("<div/>");
+  let node1 = $("<div/>");
+  node1.addClass("col-sm-9 container-input left-align");
+  node1.append("<input type='text' id='envelope-link-field' value=" + link + ">");
+  let node2 = $("<div/>");
+  node2.addClass("col-sm-3 container-button");
+  node2.append("<button id='copyBtn' class='btn btn-env' onclick='copyToClipboard('#envelope-link-field')'>COPY</button>");
+  node.append(node1);
+  node.append(node2);
+  return node;
 }
 
 function renderEnvelope(index) {

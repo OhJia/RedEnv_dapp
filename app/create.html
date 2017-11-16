@@ -6,22 +6,122 @@
         <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
     </head>
     <body class="container">
-        <h1>Red Envelope ETH</h1>
+        <!-- <div class="container"> -->
+            <div class="container header">
+                <div class="row">
+                    <div class="col-sm-6 black">
+                        <h2>Red Envelope</h2>
+                    </div>
+                    <div class="col-sm-6">
+                        <ul class="list-unstyled right-align">
+                            <li><h3><a href="/create.html">Create</a></h3></li>
+                            <li><h3><a href="/claim.html">Claim</a></h3></li>
+                            <li><h3><a href="/claim.html">About</a></h3></li>
+                            <li><p><a href="/">ENG</a></p></li>
+                            <li><p><a href="/">中文</a></p></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="container content">
+                <div id="container-create">
+                    <div class="container-title">
+                        <h2>Create an envelope</h2>
+                        <p>This is the description.</p>
+                    </div>
+                    <div style="display: none;" class="alert alert-success" id="buy-msg"></div>
+                   
+                    <form id="create-envelope" action="">
+                        <div class="container-input row">
+                            <div class="col-sm-3 right-align">
+                                <label for="amount">Amount:</label>
+                            </div>
+                            <div class="col-sm-7 left-align">
+                                <input type="text" id="amount" 
+                                    placeholder="0.005"  
+                                    onfocus="this.placeholder=''"
+                                    onblur="this.placeholder='0.005'" required="required">
+                            </div>
+                            <div class="col-sm-2">
+                                <label for="amount">ETH</label>
+                            </div>
+                        </div>
+                        <div class="container-input row">
+                            <div class="col-sm-3 right-align">
+                                <label for="password">Password:</label>
+                            </div>
+                            <div class="col-sm-7 left-align">
+                                <input type="password" id="password" 
+                                    placeholder="verygoodpassword" 
+                                    onfocus="this.placeholder=''"
+                                    onblur="this.placeholder='verygoodpassword'"
+                                    required="required">
+                            </div>
+                            <div class="col-sm-2">
+                                <input type="button"
+                                    onclick="if(password.type=='text') {password.type='password';
+                                        this.value='show';
+                                    } else {
+                                        password.type='text';
+                                        this.value='hide';
+                                    }"
+                                    value="show"
+                                >
+                                
+                            </div>
+                        </div>
+                      <!-- <input type="submit" value="Create"> -->
+                      <button type="submit" class="btn btn-env">CREATE</button>
+                    </form>
+                </div>
+                
+                <div class="container-envelope">
+                    <!-- <div class="row" id="envelope-info">
+                        <h2>Red Env #1</h2>
+                        <div class="left-align">
+                            <p><strong>From: </strong>0xc34abb0be84e2e69707f6dcae0c6252eb82219a8</p>
+                            <p><strong>Created at: </strong>11-08-2017  3:30:00 PM </p>
+                        </div>
+                        <div class="envelope-info-area">
+                            <p><strong>Remaining amount:</strong></p>
+                            <h2>0.001 ETH</h2>
+                            <p><strong>Initial amount: </strong>0.001 ETH</p>
+                            <p><strong># of claims: </strong>0</p>
+                        </div>
+                    </div> -->
+                    <div class="row" id="envelope-link">
+                        <!-- <div class="col-sm-9 container-input left-align">
+                            <input type="text" id="envelope-link-field" 
+                            value="redenv.io/claim.html?env-id=1">
+                        </div>
+                        <div class="col-sm-3 container-button">
+                            <button id="copyBtn" class="btn btn-env"
+                                onclick="copyToClipboard('#envelope-link-field')"
+                            >COPY</button>
+                        </div> -->
+                    </div>
+                </div>
 
-        <div class="table-responsive">
-            <h2>Create an envelope</h2>
-            <div style="display: none;" class="alert alert-success" id="buy-msg"></div>
-           
-            <form id="create-envelope" action="">
-              <input type="text" id="amount" placeholder="e.g., 0.5" required="required">
-              <input type="text" id="password" placeholder="e.g., testing" required="required">
-              <input type="submit" value="Create">
-            </form>
-            <div class="row" id="envelope-link"></div>
-            <div class="row" id="envelope-info"></div>
-        </div>
-
+                <div class="container-social">
+                    <ul class="list-unstyled">
+                        <li><h3><a href="/create.html">Twitter</a></h3></li>
+                        <li><h3><a href="/claim.html">Medium</a></h3></li>
+                        <li><h3><a href="/claim.html">Github</a></h3></li>
+                    </ul>
+                </div>
+            </div>
     </body>
     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
     <script src="app.js"></script>
+    <script>
+        function copyToClipboard(element) {
+            console.log("pressed!", $(element).val());
+            var $temp = $("<input>");
+            $("body").append($temp);
+            $temp.val($(element).val()).select();
+            document.execCommand("copy");
+            $temp.remove();
+        }
+    </script>
 </html>
