@@ -154,9 +154,10 @@ function generateEnvelopeLink() {
   //$("#container-envelope").show();
   RedEnvelope.deployed().then(function(i) {
     i.envelopeIndex.call().then(function(index) {
+      console.log("index is at: ", index);
       const link = "?env-id=" + index;
       $("#envelope-link").append(buildEnvelopeLink(link));
-      //renderEnvelope(index);
+      renderEnvelope(index);
     });
   })
 }
@@ -169,10 +170,20 @@ function buildEnvelopeLink(link) {
   node1.append("<input type='text' id='envelope-link-field' value=" + link + ">");
   let node2 = $("<div/>");
   node2.addClass("col-sm-3 container-button");
-  node2.append("<button id='copyBtn' class='btn btn-env' onclick='copyToClipboard('#envelope-link-field')'>COPY</button>");
+  node2.append("<button id='copyBtn' class='btn btn-env' onclick='copyToClipboard(\'#envelope-link-field\')'>COPY</button>");
   node.append(node1);
   node.append(node2);
   return node;
+}
+
+function copyToClipboard(element) {
+  console.log("pressed!", $(element).val());
+  console.log(element);
+  var $temp = $("<input>");
+  $("body").append($temp);
+  $temp.val($(element).val()).select();
+  document.execCommand("copy");
+  $temp.remove();
 }
 
 function renderEnvelope(index) {
@@ -185,15 +196,27 @@ function renderEnvelope(index) {
 
 function buildEnvelope(env) {
   console.log(env);
+  
   let node = $("<div/>");
-  node.addClass("col-sm-3 text-center col-margin-bottom-1");
-  node.append("<div>Red Env #" + env[0] + "</div>");
-  node.append("<div>From: " + env[1]+ "</div>");
-  node.append("<div>Created at: " + env[2]+ "</div>");
-  node.append("<div>Initial balance: " + env[3]+ "</div>");
-  node.append("<div>Remaining balance: " + env[4] + "</div>");
+  node.append("<h2>Red Env #" + env[0] + "</h2>");
+  
+  let node1 = $("<div/>");
+  node1.addClass("left-align");
+  node1.append("<p><strong>From: </strong>" + env[1] + "</p>");
+  node1.append("<p><strong>Created at: </strong>" + env[2] + "</p>");
+  
+  let node2 = $("<div/>");
+  node2.addClass("envelope-info-area");
+  node2.append("<p><strong>Remaining amount:</strong></p>");
+  node2.append("<h2>" + env[3] + "ETH</h2>");
+  node2.append("<p><strong>Initial amount: </strong>" + env[4] + "ETH</p>");
+  // node2.append("<p><strong># of claims: </strong>" + env[5] + "</p>");
+
+  node.append(node1);
+  node.append(node2);
   return node;
 }
+
 
 
 /***************************************************
