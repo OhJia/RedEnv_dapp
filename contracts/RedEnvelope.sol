@@ -25,12 +25,12 @@ contract RedEnvelope {
 
 	// Create an envelope by paying ether
 
-	function buyEnvelope(string _password) payable public returns (bool) {
+	function buyEnvelope(string _passcode) payable public returns (bool) {
 		
 		require (msg.value > 0);
 
 		envelopeIndex += 1;
-		bytes32 envHash = sha3(msg.sender, _password);
+		bytes32 envHash = sha3(msg.sender, _passcode);
 		
 		Envelope memory env = Envelope(
 			envelopeIndex,
@@ -43,7 +43,7 @@ contract RedEnvelope {
         	false
 		);
 
-		textToAddress[_password] = msg.sender;
+		textToAddress[_passcode] = msg.sender;
 		envelopes[envelopeIndex] = env;
 
     	return true;
@@ -52,19 +52,19 @@ contract RedEnvelope {
 	
 	// Check passcode
 
-	function checkPassword(string _password, uint _envelopeIndex) public returns (bool) {
-		address creator = textToAddress[_password];
-		bytes32 submittedHash = sha3(creator, _password);
+	function checkPasscode(string _passcode, uint _envelopeIndex) public returns (bool) {
+		address creator = textToAddress[_passcode];
+		bytes32 submittedHash = sha3(creator, _passcode);
 
 		Envelope storage env = envelopes[_envelopeIndex];
 
 		return submittedHash == env.hash;
 	}
 
-	function claim(string _password, uint _envelopeIndex) public {
+	function claim(string _passcode, uint _envelopeIndex) public {
 		Envelope storage env = envelopes[_envelopeIndex];
 
-		require (checkPassword(_password, _envelopeIndex))
+		require (checkPasscode(_passcode, _envelopeIndex))
 		require (env.remainingBalance > 0);
 
 		uint claimAmount = generateClaimAmount(env.remainingBalance);

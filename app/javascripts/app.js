@@ -22,7 +22,7 @@ window.App = {
     $("#create-envelope").submit(function(event) {
        const req = {
         amount: $('#amount').val(),
-        password: $('#password').val(),
+        passcode: $('#passcode').val(),
        };
 
        event.preventDefault();
@@ -77,7 +77,7 @@ window.App = {
 
     let amountToBuy = params.amount;
     let amountInWei = web3.toWei(amountToBuy, 'ether');   
-    let password = params.password.toString();
+    let passcode = params.passcode.toString();
     // let currentTime = new Date() / 1000;
     console.log("params:");
     console.log(params);
@@ -85,7 +85,7 @@ window.App = {
     //$("#buy-msg").html("Making your envelope. Please wait.");
 
     RedEnvelope.deployed().then(function(i) {
-      i.buyEnvelope(password, {from: web3.eth.accounts[0], value: amountInWei}).then(function(f) {
+      i.buyEnvelope(passcode, {from: web3.eth.accounts[0], value: amountInWei}).then(function(f) {
         //$("#buy-msg").html("");
         $("#container-create").hide();
         generateEnvelopeLink();
@@ -108,8 +108,8 @@ window.App = {
     console.log(index);
 
     RedEnvelope.deployed().then(function(i) {
-      i.checkPassword.call(passcode, index, {from: web3.eth.accounts[0]}).then(function(matched) {
-        console.log("password matched: ", matched);
+      i.checkPasscode.call(passcode, index, {from: web3.eth.accounts[0]}).then(function(matched) {
+        console.log("passcode matched: ", matched);
         if (matched) {
           $("#unlock-envelope").hide();
           $("#passcode-not-match").html("");
