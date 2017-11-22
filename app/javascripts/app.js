@@ -24,7 +24,7 @@ window.App = {
         amount: $('#amount').val(),
         password: $('#password').val(),
        };
-       
+
        event.preventDefault();
 
        App.buyEnvelope(req);
@@ -41,7 +41,7 @@ window.App = {
       //renderProductDetails(productId);
       console.log("On claim page");
       $("#passcode-not-match").hide();
-      
+
       // If this is a query
       if (envIndex) { 
         claimEnvIndex = envIndex;
@@ -56,8 +56,8 @@ window.App = {
     */ 
     $("#claim-enter-passcode").submit(function(event) {
        const req = {
-        claimPasscode: $('#claim-passcode').val(),
-        claimIndex: claimEnvIndex
+         claimPasscode: App.getPasscode(),
+         claimIndex: claimEnvIndex
        };
        console.log(req);
 
@@ -65,8 +65,11 @@ window.App = {
 
        App.checkPasscode(req);
     });
-    
   },
+
+  getPasscode: function() {
+    return $('#claim-passcode').val();
+  }
 
   // Create envelope
   buyEnvelope: function(params) {
@@ -104,23 +107,18 @@ window.App = {
     console.log(passcode);
     console.log(index);
 
-    let matched = false;
-
     RedEnvelope.deployed().then(function(i) {
-      i.checkPassword(passcode, index, {from: web3.eth.accounts[0]}).then(function(f) {
-        i.getMatchPassword.call(index).then(function(f) {
-          console.log("password matched: ", f);
-          matched = f;
-          if (matched) {
-            $("#unlock-envelope").hide();
-            $("#passcode-not-match").html("");
-            renderEnvelopeClaim(index);
-          } else {
-            console.log("Passcode doesn't match. Try again.");
-            $("#passcode-not-match").show();
-            $("#passcode-not-match").html("Passcode doesn't match. Try again.");
-          }
-        })
+      i.checkPassword.call(passcode, index, {from: web3.eth.accounts[0]}).then(function(matched) {
+        console.log("password matched: ", matched);
+        if (matched) {
+          $("#unlock-envelope").hide();
+          $("#passcode-not-match").html("");
+          renderEnvelopeClaim(index);
+        } else {
+          console.log("Passcode doesn't match. Try again.");
+          $("#passcode-not-match").show();
+          $("#passcode-not-match").html("Passcode doesn't match. Try again.");
+        }
       }).catch(function(e) {
         console.log(e);
         self.setStatus("Error sending coin; see log.");
@@ -133,7 +131,7 @@ window.App = {
     let claimIndex = index;
 
     RedEnvelope.deployed().then(function(i) {
-      i.claim(claimIndex, {from: web3.eth.accounts[0]}).then(function(f) {
+      i.claim(App.getPasscode(), claimIndex, {from: web3.eth.accounts[0]}).then(function(f) {
         $("#claim-envelope").hide();
         renderClaimedEnvelope(claimIndex);
         renderClaimInfo(claimIndex, web3.eth.accounts[0]);
@@ -246,23 +244,25 @@ function renderEnvelopeClaim(index) {
   console.log("rendering env #: ", index);
   $("#claim-envelope").show();
   RedEnvelope.deployed().then(function(i) {
-    i.getEnvelopeInfo.call(index).then(function(p) {
-      console.log(p);
-      $("#claim-envelope").append(buildClaimEnvelope(p));
+    i.getEnvelopeInfo.call(index).then(function(env) {
+      console.log(env);
+      $("#claim-envelope").append(buildClaimEnvelope(env));
     });
   })
 }
 
 function buildClaimEnvelope(env) {
   console.log(env);
+  const [id, creatorAddress, startTime, initialBalance, remainingBalance, totalClaims] = env;
   let node = $("<div/>");
   node.addClass("col-sm-3 text-center col-margin-bottom-1");
-  node.append("<div><h2>Red Env #" + env[0] + "</h2></div>");
-  node.append("<div>From: " + env[1]+ "</div>");
-  node.append("<div>Created at: " + env[2]+ "</div>");
-  node.append("<div>Initial balance: " + env[3]+ "</div>");
-  node.append("<div>Remaining balance: " + env[4] + "</div>");
-  node.append("<div><button id='claim' onclick='App.claim(" + env[0] + ")'>Claim</button></div>");
+  node.append("<div><h2>Red Env #" + id + "</h2></div>");
+  node.append("<div>From: " + creatorAddress + "</div>");
+  node.append("<div>Created at: " + startTime + "</div>");
+  node.append("<div>Initial balance: " + initialBalance + "</div>");
+  node.append("<div>Remaining balance: " + remainingBalance + "</div>");
+  node.append("<div>Total claims: " + totalClaims + "</div>");
+  node.append("<div><button id='claim' onclick='App.claim(" + id + ")'>Claim</button></div>");
   return node;
 }
 
