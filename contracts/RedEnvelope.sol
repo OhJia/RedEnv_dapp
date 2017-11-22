@@ -35,12 +35,11 @@ contract RedEnvelope {
 		Envelope memory env = Envelope(
 			envelopeIndex,
 			envHash,
-        	msg.sender, 
-        	now,
-        	msg.value, 
-        	msg.value,
-        	0,
-        	false
+			msg.sender,
+			now,
+			msg.value,
+			msg.value,
+			0
 		);
 
 		textToAddress[_passcode] = msg.sender;
@@ -64,7 +63,7 @@ contract RedEnvelope {
 	function claim(string _passcode, uint _envelopeIndex) public {
 		Envelope storage env = envelopes[_envelopeIndex];
 
-		require (checkPasscode(_passcode, _envelopeIndex))
+		require (checkPasscode(_passcode, _envelopeIndex));
 		require (env.remainingBalance > 0);
 
 		uint claimAmount = generateClaimAmount(env.remainingBalance);

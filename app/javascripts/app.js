@@ -69,7 +69,7 @@ window.App = {
 
   getPasscode: function() {
     return $('#claim-passcode').val();
-  }
+  },
 
   // Create envelope
   buyEnvelope: function(params) {
