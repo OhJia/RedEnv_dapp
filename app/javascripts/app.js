@@ -8,6 +8,15 @@ import redenvelope_artifacts from '../../build/contracts/RedEnvelope.json'
 
 var RedEnvelope = contract(redenvelope_artifacts);
 
+window.copyToClipboard = window.copyToClipboard || function(element) {
+  console.log("pressed!", $(element).val());
+  console.log(element);
+  var $temp = $("<input>");
+  $("body").append($temp);
+  $temp.val($(element).val()).select();
+  document.execCommand("copy");
+  $temp.remove();
+}
 
 window.App = {
   start: function() {
@@ -22,9 +31,9 @@ window.App = {
     $("#create-envelope").submit(function(event) {
        const req = {
         amount: $('#amount').val(),
-        password: $('#password').val(),
+        passcode: $('#passcode').val(),
        };
-       
+
        event.preventDefault();
 
        App.buyEnvelope(req);
@@ -41,7 +50,7 @@ window.App = {
       //renderProductDetails(productId);
       console.log("On claim page");
       $("#passcode-not-match").hide();
-      
+
       // If this is a query
       if (envIndex) { 
         claimEnvIndex = envIndex;
@@ -56,8 +65,8 @@ window.App = {
     */ 
     $("#claim-enter-passcode").submit(function(event) {
        const req = {
-        claimPasscode: $('#claim-passcode').val(),
-        claimIndex: claimEnvIndex
+         claimPasscode: App.getPasscode(),
+         claimIndex: claimEnvIndex
        };
        console.log(req);
 
@@ -65,7 +74,10 @@ window.App = {
 
        App.checkPasscode(req);
     });
-    
+  },
+
+  getPasscode: function() {
+    return $('#claim-passcode').val();
   },
 
   // Create envelope
@@ -74,7 +86,7 @@ window.App = {
 
     let amountToBuy = params.amount;
     let amountInWei = web3.toWei(amountToBuy, 'ether');   
-    let password = params.password.toString();
+    let passcode = params.passcode.toString();
     // let currentTime = new Date() / 1000;
     console.log("params:");
     console.log(params);
@@ -82,7 +94,7 @@ window.App = {
     //$("#buy-msg").html("Making your envelope. Please wait.");
 
     RedEnvelope.deployed().then(function(i) {
-      i.buyEnvelope(password, {from: web3.eth.accounts[0], value: amountInWei}).then(function(f) {
+      i.buyEnvelope(passcode, {from: web3.eth.accounts[0], value: amountInWei}).then(function(f) {
         //$("#buy-msg").html("");
         $("#container-create").hide();
         generateEnvelopeLink();
@@ -104,23 +116,18 @@ window.App = {
     console.log(passcode);
     console.log(index);
 
-    let matched = false;
-
     RedEnvelope.deployed().then(function(i) {
-      i.checkPassword(passcode, index, {from: web3.eth.accounts[0]}).then(function(f) {
-        i.getMatchPassword.call(index).then(function(f) {
-          console.log("password matched: ", f);
-          matched = f;
-          if (matched) {
-            $("#unlock-envelope").hide();
-            $("#passcode-not-match").html("");
-            renderEnvelopeClaim(index);
-          } else {
-            console.log("Passcode doesn't match. Try again.");
-            $("#passcode-not-match").show();
-            $("#passcode-not-match").html("Passcode doesn't match. Try again.");
-          }
-        })
+      i.checkPasscode.call(passcode, index, {from: web3.eth.accounts[0]}).then(function(matched) {
+        console.log("passcode matched: ", matched);
+        if (matched) {
+          $("#unlock-envelope").hide();
+          $("#passcode-not-match").html("");
+          renderEnvelopeClaim(index);
+        } else {
+          console.log("Passcode doesn't match. Try again.");
+          $("#passcode-not-match").show();
+          $("#passcode-not-match").html("Passcode doesn't match. Try again.");
+        }
       }).catch(function(e) {
         console.log(e);
         self.setStatus("Error sending coin; see log.");
@@ -133,7 +140,7 @@ window.App = {
     let claimIndex = index;
 
     RedEnvelope.deployed().then(function(i) {
-      i.claim(claimIndex, {from: web3.eth.accounts[0]}).then(function(f) {
+      i.claim(App.getPasscode(), claimIndex, {from: web3.eth.accounts[0]}).then(function(f) {
         $("#claim-envelope").hide();
         renderClaimedEnvelope(claimIndex);
         renderClaimInfo(claimIndex, web3.eth.accounts[0]);
@@ -163,27 +170,16 @@ function generateEnvelopeLink() {
 }
 
 function buildEnvelopeLink(link) {
-
   let node = $("<div/>");
   let node1 = $("<div/>");
   node1.addClass("col-sm-9 container-input left-align");
   node1.append("<input type='text' id='envelope-link-field' value=" + link + ">");
   let node2 = $("<div/>");
   node2.addClass("col-sm-3 container-button");
-  node2.append("<button id='copyBtn' class='btn btn-env' onclick='copyToClipboard(\'#envelope-link-field\')'>COPY</button>");
+  node2.append(`<button id='copyBtn' class='btn btn-env' onclick='copyToClipboard("#envelope-link-field")'>COPY</button>`);
   node.append(node1);
   node.append(node2);
   return node;
-}
-
-function copyToClipboard(element) {
-  console.log("pressed!", $(element).val());
-  console.log(element);
-  var $temp = $("<input>");
-  $("body").append($temp);
-  $temp.val($(element).val()).select();
-  document.execCommand("copy");
-  $temp.remove();
 }
 
 function renderEnvelope(index) {
@@ -246,23 +242,25 @@ function renderEnvelopeClaim(index) {
   console.log("rendering env #: ", index);
   $("#claim-envelope").show();
   RedEnvelope.deployed().then(function(i) {
-    i.getEnvelopeInfo.call(index).then(function(p) {
-      console.log(p);
-      $("#claim-envelope").append(buildClaimEnvelope(p));
+    i.getEnvelopeInfo.call(index).then(function(env) {
+      console.log(env);
+      $("#claim-envelope").append(buildClaimEnvelope(env));
     });
   })
 }
 
 function buildClaimEnvelope(env) {
   console.log(env);
+  const [id, creatorAddress, startTime, initialBalance, remainingBalance, totalClaims] = env;
   let node = $("<div/>");
   node.addClass("col-sm-3 text-center col-margin-bottom-1");
-  node.append("<div><h2>Red Env #" + env[0] + "</h2></div>");
-  node.append("<div>From: " + env[1]+ "</div>");
-  node.append("<div>Created at: " + env[2]+ "</div>");
-  node.append("<div>Initial balance: " + env[3]+ "</div>");
-  node.append("<div>Remaining balance: " + env[4] + "</div>");
-  node.append("<div><button id='claim' onclick='App.claim(" + env[0] + ")'>Claim</button></div>");
+  node.append("<div><h2>Red Env #" + id + "</h2></div>");
+  node.append("<div>From: " + creatorAddress + "</div>");
+  node.append("<div>Created at: " + startTime + "</div>");
+  node.append("<div>Initial balance: " + initialBalance + "</div>");
+  node.append("<div>Remaining balance: " + remainingBalance + "</div>");
+  node.append("<div>Total claims: " + totalClaims + "</div>");
+  node.append("<div><button id='claim' onclick='App.claim(" + id + ")'>Claim</button></div>");
   return node;
 }
 

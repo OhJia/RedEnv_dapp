@@ -49,26 +49,26 @@
                     </div>
                     <div class="container-input row">
                         <div class="col-sm-3 right-align">
-                            <label for="password">Password:</label>
+                            <label for="passcode">Passcode:</label>
                         </div>
                         <div class="col-sm-7 left-align">
-                            <input type="password" id="password" 
-                                placeholder="verygoodpassword" 
+                            <input type="passcode" id="passcode" 
+                                placeholder="verygoodpasscode" 
                                 onfocus="this.placeholder=''"
-                                onblur="this.placeholder='verygoodpassword'"
+                                onblur="this.placeholder='verygoodpasscode'"
                                 required="required">
                         </div>
                         <div class="col-sm-2">
                             <input type="button"
-                                onclick="if(password.type=='text') {password.type='password';
+                                onclick="if(passcode.type=='text') {passcode.type='passcode';
                                     this.value='show';
                                 } else {
-                                    password.type='text';
+                                    passcode.type='text';
                                     this.value='hide';
                                 }"
                                 value="show"
                             >
-                            
+
                         </div>
                     </div>
                   <!-- <input type="submit" value="Create"> -->
