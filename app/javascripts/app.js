@@ -281,14 +281,15 @@ function renderClaimedEnvelope(index) {
 }
 
 function buildClaimedEnvelope(env) {
-  console.log(env);
+  const [id, creatorAddress, startTime, initialBalance, remainingBalance, totalClaims] = env;
   let node = $("<div/>");
   node.addClass("col-sm-3 text-center col-margin-bottom-1");
-  node.append("<div><h2>Red Env #" + env[0] + "</h2></div>");
-  node.append("<div>From: " + env[1]+ "</div>");
-  node.append("<div>Created at: " + env[2]+ "</div>");
-  node.append("<div>Initial balance: " + env[3]+ "</div>");
-  node.append("<div>Remaining balance: " + env[4] + "</div>");
+  node.append("<div><h2>Red Env #" + id + "</h2></div>");
+  node.append("<div>From: " + creatorAddress + "</div>");
+  node.append("<div>Created at: " + startTime + "</div>");
+  node.append("<div>Initial balance: " + initialBalance + "</div>");
+  node.append("<div>Remaining balance: " + remainingBalance + "</div>");
+  node.append("<div>Total claims: " + totalClaims + "</div>");
   return node;
 }
 

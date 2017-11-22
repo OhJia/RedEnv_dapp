@@ -27,7 +27,7 @@ contract RedEnvelope {
 
 	function buyEnvelope(string _passcode) payable public returns (bool) {
 		
-		require (msg.value > 0);
+		require (msg.value > 500);
 
 		envelopeIndex += 1;
 		bytes32 envHash = sha3(msg.sender, _passcode);
@@ -104,7 +104,10 @@ contract RedEnvelope {
 	// Helper
 
 	function generateClaimAmount(uint _remainingBalance) private constant returns (uint) {
-		uint amount = uint(sha3(block.timestamp))%(0+_remainingBalance)-0;
+		uint amount = uint(sha3(block.timestamp))%(_remainingBalance-50)+50;
+
+		require (amount > 0);
+		require (amount <= _remainingBalance);
 		return amount;
 	}
 
