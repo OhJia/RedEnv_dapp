@@ -8,6 +8,15 @@ import redenvelope_artifacts from '../../build/contracts/RedEnvelope.json'
 
 var RedEnvelope = contract(redenvelope_artifacts);
 
+window.copyToClipboard = window.copyToClipboard || function(element) {
+  console.log("pressed!", $(element).val());
+  console.log(element);
+  var $temp = $("<input>");
+  $("body").append($temp);
+  $temp.val($(element).val()).select();
+  document.execCommand("copy");
+  $temp.remove();
+}
 
 window.App = {
   start: function() {
@@ -161,27 +170,16 @@ function generateEnvelopeLink() {
 }
 
 function buildEnvelopeLink(link) {
-
   let node = $("<div/>");
   let node1 = $("<div/>");
   node1.addClass("col-sm-9 container-input left-align");
   node1.append("<input type='text' id='envelope-link-field' value=" + link + ">");
   let node2 = $("<div/>");
   node2.addClass("col-sm-3 container-button");
-  node2.append("<button id='copyBtn' class='btn btn-env' onclick='copyToClipboard(\'#envelope-link-field\')'>COPY</button>");
+  node2.append(`<button id='copyBtn' class='btn btn-env' onclick='copyToClipboard("#envelope-link-field")'>COPY</button>`);
   node.append(node1);
   node.append(node2);
   return node;
-}
-
-function copyToClipboard(element) {
-  console.log("pressed!", $(element).val());
-  console.log(element);
-  var $temp = $("<input>");
-  $("body").append($temp);
-  $temp.val($(element).val()).select();
-  document.execCommand("copy");
-  $temp.remove();
 }
 
 function renderEnvelope(index) {
