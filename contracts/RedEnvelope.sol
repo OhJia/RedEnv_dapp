@@ -16,7 +16,7 @@ contract RedEnvelope {
 	mapping (uint => Envelope) private envelopes;
 	mapping (string => address) private textToAddress;
 
-	uint public envelopeIndex; 
+	uint public envelopeIndex;
 	
 	function RedEnvelope() public {
 		envelopeIndex = 0;

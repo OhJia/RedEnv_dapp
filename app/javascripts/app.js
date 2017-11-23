@@ -7,6 +7,7 @@ import { default as contract } from 'truffle-contract'
 import redenvelope_artifacts from '../../build/contracts/RedEnvelope.json'
 
 var RedEnvelope = contract(redenvelope_artifacts);
+var claimedTimeout = null
 
 window.copyToClipboard = window.copyToClipboard || function(element) {
   console.log("pressed!", $(element).val());
@@ -111,6 +112,8 @@ window.App = {
   checkPasscode: function(params) {
     var self = this;
 
+    clearInterval(claimedTimeout)
+
     let passcode = params.claimPasscode;
     let index = params.claimIndex;
     console.log(passcode);
@@ -122,7 +125,8 @@ window.App = {
         if (matched) {
           $("#unlock-envelope").hide();
           $("#passcode-not-match").html("");
-          renderEnvelopeClaim(index);
+          renderClaimedEnvelope(index);
+          renderClaimButton(index);
         } else {
           console.log("Passcode doesn't match. Try again.");
           $("#passcode-not-match").show();
@@ -139,9 +143,10 @@ window.App = {
     var self = this;
     let claimIndex = index;
 
+    clearInterval(claimedTimeout)
+
     RedEnvelope.deployed().then(function(i) {
       i.claim(App.getPasscode(), claimIndex, {from: web3.eth.accounts[0]}).then(function(f) {
-        $("#claim-envelope").hide();
         renderClaimedEnvelope(claimIndex);
         renderClaimInfo(claimIndex, web3.eth.accounts[0]);
       }).catch(function(e) {
@@ -217,7 +222,6 @@ function buildEnvelope(env) {
 
 /***************************************************
   RENDER ENVELOPE INFO TO CLAIM
-
 ****************************************************/
 function checkIndex(id) {
   console.log("submitted index: ", id);
@@ -238,46 +242,39 @@ function checkIndex(id) {
   })
 }
 
-function renderEnvelopeClaim(index) {
-  console.log("rendering env #: ", index);
-  $("#claim-envelope").show();
+function renderClaimButton(index) {
+  console.log("rendering claim button for #: ", index);
+  $("#claim-button").show();
   RedEnvelope.deployed().then(function(i) {
     i.getEnvelopeInfo.call(index).then(function(env) {
       console.log(env);
-      $("#claim-envelope").append(buildClaimEnvelope(env));
+      $("#claim-button").append(buildClaimButton(env));
     });
   })
 }
 
-function buildClaimEnvelope(env) {
+function buildClaimButton(env) {
   console.log(env);
-  const [id, creatorAddress, startTime, initialBalance, remainingBalance, totalClaims] = env;
-  let node = $("<div/>");
-  node.addClass("col-sm-3 text-center col-margin-bottom-1");
-  node.append("<div><h2>Red Env #" + id + "</h2></div>");
-  node.append("<div>From: " + creatorAddress + "</div>");
-  node.append("<div>Created at: " + startTime + "</div>");
-  node.append("<div>Initial balance: " + initialBalance + "</div>");
-  node.append("<div>Remaining balance: " + remainingBalance + "</div>");
-  node.append("<div>Total claims: " + totalClaims + "</div>");
+  const [id] = env
+  let node = $("<div/>")
   node.append("<div><button id='claim' onclick='App.claim(" + id + ")'>Claim</button></div>");
   return node;
 }
 
 /***************************************************
   RENDER CLAIMED ENVELOPE & CLAIM INFO
-
 ****************************************************/
 
 function renderClaimedEnvelope(index) {
-  console.log("rendering claim #: ", index);
-  $("#claimed-envelope-info").show();
-  RedEnvelope.deployed().then(function(i) {
-    i.getEnvelopeInfo.call(index).then(function(p) {
-      console.log(p);
-      $("#claimed-envelope-info").append(buildClaimedEnvelope(p));
-    });
-  })
+  setInterval(() => {
+    console.log("rendering claimed envelope #: ", index);
+    $("#claimed-envelope").show();
+    RedEnvelope.deployed().then(function(i) {
+      i.getEnvelopeInfo.call(index).then(function(envelope) {
+        $("#claimed-envelope").html(buildClaimedEnvelope(envelope));
+      });
+    })
+  }, 1000)
 }
 
 function buildClaimedEnvelope(env) {
@@ -294,21 +291,25 @@ function buildClaimedEnvelope(env) {
 }
 
 function renderClaimInfo(index, address) {
+  console.log("rendering claim info for #: ", index);
   $("#claim-info").show();
   RedEnvelope.deployed().then(function(i) {
-    i.getClaimInfo.call(index, address).then(function(p) {
-      console.log(p);
-      let node = $("<div/>");
-      node.addClass("col-sm-3 text-center col-margin-bottom-1");
-      node.append("<div><h3>You claimed " + p + ".</h3></div>");
-      $("#claim-info").append(node);
+    i.getClaimInfo.call(index, address).then(function(claim) {
+      $("#claim-info").append(buildClaimInfo(claim));
     });
   })
 }
 
+function buildClaimInfo(claim) {
+  console.log(claim);
+  let node = $("<div/>");
+  node.addClass("col-sm-3 text-center col-margin-bottom-1");
+  node.append("<div><h3>You claimed " + claim + ".</h3></div>");
+  return node;
+}
+
 /***************************************************
   ON LOAD
-  
 ****************************************************/
 window.addEventListener('load', function() {
   //Checking if Web3 has been injected by the browser (Mist/MetaMask)
