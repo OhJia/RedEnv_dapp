@@ -7,7 +7,7 @@ import { default as contract } from 'truffle-contract'
 import redenvelope_artifacts from '../../build/contracts/RedEnvelope.json'
 
 var RedEnvelope = contract(redenvelope_artifacts);
-var claimedTimeout = null
+//var claimedTimeout = null
 
 window.copyToClipboard = window.copyToClipboard || function(element) {
   console.log("pressed!", $(element).val());
@@ -25,6 +25,17 @@ window.App = {
 
     RedEnvelope.setProvider(web3.currentProvider);
     console.log("App started and web3 provider set.")
+
+    // RedEnvelope.deployed().then(function(i) {
+    //   var event = i.ReturnClaimValue();
+    //   console.log(event);
+    //   event.watch(function(err, res) {
+    //     if (err) { console.log("ERROR WATCHING CLAIM EVENT"); return; }
+    //     console.log("*** CLAIM EVENT RESULT ***");
+    //     console.log(res);
+    //     //claimEvent.stopWatching();
+    //   });
+    // });
 
     /* 
     * On create page
@@ -112,7 +123,7 @@ window.App = {
   checkPasscode: function(params) {
     var self = this;
 
-    clearInterval(claimedTimeout)
+    //clearInterval(claimedTimeout)
 
     let passcode = params.claimPasscode;
     let index = params.claimIndex;
@@ -142,17 +153,23 @@ window.App = {
   claim: function(index) {
     var self = this;
     let claimIndex = index;
-
-    clearInterval(claimedTimeout)
-
     RedEnvelope.deployed().then(function(i) {
-      i.claim(App.getPasscode(), claimIndex, {from: web3.eth.accounts[0]}).then(function(f) {
-        renderClaimedEnvelope(claimIndex);
-        renderClaimInfo(claimIndex, web3.eth.accounts[0]);
-      }).catch(function(e) {
-        console.log(e);
-        self.setStatus("Error sending coin; see log.");
-      });
+      return i.claim(App.getPasscode(), claimIndex, {from: web3.eth.accounts[0]})
+    }).then(function(result) { 
+          
+      for (var i = 0; i < result.logs.length; i++) {
+        var log = result.logs[i];
+        if (log.event == "Claimed") {
+          console.log("Claimed event found! ", parseInt(log.args._id), parseInt(log.args._value));
+          $("#claim-button").hide();
+          $("#claimed-envelope").hide();
+          renderClaimedEnvelope(parseInt(log.args._id));
+          $("#claim-info").html(buildClaimInfo(parseInt(log.args._value)));
+        }
+      }        
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error sending coin; see log.");
     });
   }
 
@@ -266,15 +283,16 @@ function buildClaimButton(env) {
 ****************************************************/
 
 function renderClaimedEnvelope(index) {
-  setInterval(() => {
+  // setInterval(() => {
     console.log("rendering claimed envelope #: ", index);
-    $("#claimed-envelope").show();
+    //$("#claimed-envelope").show();
     RedEnvelope.deployed().then(function(i) {
       i.getEnvelopeInfo.call(index).then(function(envelope) {
         $("#claimed-envelope").html(buildClaimedEnvelope(envelope));
+        $("#claimed-envelope").show();
       });
     })
-  }, 1000)
+  // }, 1000)
 }
 
 function buildClaimedEnvelope(env) {
@@ -290,15 +308,15 @@ function buildClaimedEnvelope(env) {
   return node;
 }
 
-function renderClaimInfo(index, address) {
-  console.log("rendering claim info for #: ", index);
-  $("#claim-info").show();
-  RedEnvelope.deployed().then(function(i) {
-    i.getClaimInfo.call(index, address).then(function(claim) {
-      $("#claim-info").append(buildClaimInfo(claim));
-    });
-  })
-}
+// function renderClaimInfo(index, address) {
+//   console.log("rendering claim info for #: ", index);
+//   $("#claim-info").show();
+//   RedEnvelope.deployed().then(function(i) {
+//     i.getClaimInfo.call(index, address).then(function(claim) {
+//       $("#claim-info").html(buildClaimInfo(claim));
+//     });
+//   })
+// }
 
 function buildClaimInfo(claim) {
   console.log(claim);

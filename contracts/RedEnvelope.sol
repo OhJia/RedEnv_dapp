@@ -16,6 +16,12 @@ contract RedEnvelope {
 	mapping (uint => Envelope) private envelopes;
 	mapping (string => address) private textToAddress;
 
+	event Claimed(
+		address indexed _from,
+		uint _id,
+		uint _value
+	);
+
 	uint public envelopeIndex;
 	
 	function RedEnvelope() public {
@@ -72,6 +78,8 @@ contract RedEnvelope {
 		msg.sender.transfer(claimAmount);
 		env.totalClaims += 1;
 		env.claims[msg.sender] = claimAmount;
+
+		Claimed(msg.sender, env.id, claimAmount);		
 	}
 
 	// Getters
