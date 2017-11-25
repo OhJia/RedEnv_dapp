@@ -6,8 +6,9 @@ import { default as contract } from 'truffle-contract'
 // Import contract artifacts and turn them into usable abstractions.
 import redenvelope_artifacts from '../../build/contracts/RedEnvelope.json'
 
+import { default as moment } from 'moment';
+
 var RedEnvelope = contract(redenvelope_artifacts);
-//var claimedTimeout = null
 
 window.copyToClipboard = window.copyToClipboard || function(element) {
   console.log("pressed!", $(element).val());
@@ -18,24 +19,13 @@ window.copyToClipboard = window.copyToClipboard || function(element) {
   document.execCommand("copy");
   $temp.remove();
 }
-
+ 
 window.App = {
   start: function() {
     var self = this;
 
     RedEnvelope.setProvider(web3.currentProvider);
     console.log("App started and web3 provider set.")
-
-    // RedEnvelope.deployed().then(function(i) {
-    //   var event = i.ReturnClaimValue();
-    //   console.log(event);
-    //   event.watch(function(err, res) {
-    //     if (err) { console.log("ERROR WATCHING CLAIM EVENT"); return; }
-    //     console.log("*** CLAIM EVENT RESULT ***");
-    //     console.log(res);
-    //     //claimEvent.stopWatching();
-    //   });
-    // });
 
     /* 
     * On create page
@@ -52,14 +42,12 @@ window.App = {
     });
 
     /* 
-    * if on claim page
+    * On claim page
     */ 
     let claimEnvIndex;
 
     if ($("#claim-page").length > 0) {
-      //This is product details page
       let envIndex = new URLSearchParams(window.location.search).get('env-id');
-      //renderProductDetails(productId);
       console.log("On claim page");
       $("#passcode-not-match").hide();
 
@@ -99,9 +87,8 @@ window.App = {
     let amountToBuy = params.amount;
     let amountInWei = web3.toWei(amountToBuy, 'ether');   
     let passcode = params.passcode.toString();
-    // let currentTime = new Date() / 1000;
-    console.log("params:");
-    console.log(params);
+
+    console.log("params:", params);
 
     //$("#buy-msg").html("Making your envelope. Please wait.");
 
@@ -123,8 +110,6 @@ window.App = {
   checkPasscode: function(params) {
     var self = this;
 
-    //clearInterval(claimedTimeout)
-
     let passcode = params.claimPasscode;
     let index = params.claimIndex;
     console.log(passcode);
@@ -136,8 +121,8 @@ window.App = {
         if (matched) {
           $("#unlock-envelope").hide();
           $("#passcode-not-match").html("");
-          renderClaimedEnvelope(index);
-          renderClaimButton(index);
+          renderEnvelopeToClaim(index);
+          // renderClaimButton(index);
         } else {
           console.log("Passcode doesn't match. Try again.");
           $("#passcode-not-match").show();
@@ -161,7 +146,7 @@ window.App = {
         var log = result.logs[i];
         if (log.event == "Claimed") {
           console.log("Claimed event found! ", parseInt(log.args._id), parseInt(log.args._value));
-          $("#claim-button").hide();
+          $("#envelope-to-claim").hide();
           $("#claimed-envelope").hide();
           renderClaimedEnvelope(parseInt(log.args._id));
           $("#claim-info").html(buildClaimInfo(parseInt(log.args._value)));
@@ -180,11 +165,10 @@ window.App = {
 
 ****************************************************/
 function generateEnvelopeLink() {  
-  //$("#container-envelope").show();
   RedEnvelope.deployed().then(function(i) {
     i.envelopeIndex.call().then(function(index) {
       console.log("index is at: ", index);
-      const link = "?env-id=" + index;
+      const link = "/claim.html?env-id=" + index;
       $("#envelope-link").append(buildEnvelopeLink(link));
       renderEnvelope(index);
     });
@@ -214,22 +198,27 @@ function renderEnvelope(index) {
 
 function buildEnvelope(env) {
   console.log(env);
+  const [id, creatorAddress, startTime, initialBalance, remainingBalance] = env;
   
   let node = $("<div/>");
-  node.append("<h2>Red Env #" + env[0] + "</h2>");
+
+  let node0 = $("<div/>");
+  node0.addClass("container-title");
+  node0.append("<h2>Red Env #" + id + "</h2>");
   
   let node1 = $("<div/>");
   node1.addClass("left-align");
-  node1.append("<p><strong>From: </strong>" + env[1] + "</p>");
-  node1.append("<p><strong>Created at: </strong>" + env[2] + "</p>");
+  node1.append("<p><strong>From: </strong>" + creatorAddress + "</p>");
+  node1.append("<p><strong>Created at: </strong>" + moment(startTime).format('MM-DD-YYYY HH:MM:SS A') + "</p>");
   
   let node2 = $("<div/>");
   node2.addClass("envelope-info-area");
   node2.append("<p><strong>Remaining amount:</strong></p>");
-  node2.append("<h2>" + env[3] + "ETH</h2>");
-  node2.append("<p><strong>Initial amount: </strong>" + env[4] + "ETH</p>");
+  node2.append("<h2>" + remainingBalance + "ETH</h2>");
+  node2.append("<p><strong>Initial amount: </strong>" + initialBalance + "ETH</p>");
   // node2.append("<p><strong># of claims: </strong>" + env[5] + "</p>");
 
+  node.append(node0);
   node.append(node1);
   node.append(node2);
   return node;
@@ -238,8 +227,10 @@ function buildEnvelope(env) {
 
 
 /***************************************************
-  RENDER ENVELOPE INFO TO CLAIM
+  RENDER ENVELOPE TO CLAIM
+
 ****************************************************/
+
 function checkIndex(id) {
   console.log("submitted index: ", id);
   RedEnvelope.deployed().then(function(i) {
@@ -253,61 +244,55 @@ function checkIndex(id) {
       } else {
         console.log("found");
         $("#envelope-not-found").hide();
+        $("#claim-env-index").html(id);
         $("#unlock-envelope").show();
       }
     });
   })
 }
 
-function renderClaimButton(index) {
-  console.log("rendering claim button for #: ", index);
-  $("#claim-button").show();
+function renderEnvelopeToClaim(index) {
+  console.log("rendering claim envelope #: ", index);
   RedEnvelope.deployed().then(function(i) {
-    i.getEnvelopeInfo.call(index).then(function(env) {
-      console.log(env);
-      $("#claim-button").append(buildClaimButton(env));
+    i.getEnvelopeInfo.call(index).then(function(envelope) {
+      $("#envelope-to-claim").html(buildEnvelopeToClaim(envelope));
+      $("#envelope-to-claim").show();
     });
   })
 }
 
-function buildClaimButton(env) {
-  console.log(env);
-  const [id] = env
-  let node = $("<div/>")
-  node.append("<div><button id='claim' onclick='App.claim(" + id + ")'>Claim</button></div>");
-  return node;
-}
-
-/***************************************************
-  RENDER CLAIMED ENVELOPE & CLAIM INFO
-****************************************************/
-
-function renderClaimedEnvelope(index) {
-  // setInterval(() => {
-    console.log("rendering claimed envelope #: ", index);
-    //$("#claimed-envelope").show();
-    RedEnvelope.deployed().then(function(i) {
-      i.getEnvelopeInfo.call(index).then(function(envelope) {
-        $("#claimed-envelope").html(buildClaimedEnvelope(envelope));
-        $("#claimed-envelope").show();
-      });
-    })
-  // }, 1000)
-}
-
-function buildClaimedEnvelope(env) {
+function buildEnvelopeToClaim(env) {
   const [id, creatorAddress, startTime, initialBalance, remainingBalance, totalClaims] = env;
   let node = $("<div/>");
-  node.addClass("col-sm-3 text-center col-margin-bottom-1");
-  node.append("<div><h2>Red Env #" + id + "</h2></div>");
-  node.append("<div>From: " + creatorAddress + "</div>");
-  node.append("<div>Created at: " + startTime + "</div>");
-  node.append("<div>Initial balance: " + initialBalance + "</div>");
-  node.append("<div>Remaining balance: " + remainingBalance + "</div>");
-  node.append("<div>Total claims: " + totalClaims + "</div>");
+
+  let node0 = $("<div/>");
+  node0.addClass("container-title");
+  node0.append("<div><h2>Claim Red Env #" + id + "</h2></div>");
+  node0.append("<div id='claim-button'><button id='claim' class='btn btn-env' onclick='App.claim(" + id + ")'>Claim</button></div>");
+
+  let node1 = $("<div/>");
+  node1.addClass("envelope-info-area");
+  node1.append("<p><strong>Remaining amount:</strong></p>");
+  node1.append("<h2>" + remainingBalance + "ETH</h2>");
+  node1.append("<p><strong>Initial amount: </strong>" + initialBalance + "ETH</p>");
+  node1.append("<p><strong># of claims: </strong>" + totalClaims + "</p>");
+
+  let node2 = $("<div/>");
+  node2.addClass("left-align");
+  node2.append("<p><strong>From: </strong>" + creatorAddress + "</p>");
+  node2.append("<p><strong>Created at: </strong>" + moment(startTime).format('MM-DD-YYYY HH:MM:SS A') + "</p>");
+
+  node.append(node0);
+  node.append(node1);
+  node.append(node2);
   return node;
 }
 
+
+/***************************************************
+  RENDER ENVELOPE INFO AFTER CLAIM
+
+****************************************************/
 // function renderClaimInfo(index, address) {
 //   console.log("rendering claim info for #: ", index);
 //   $("#claim-info").show();
@@ -321,8 +306,43 @@ function buildClaimedEnvelope(env) {
 function buildClaimInfo(claim) {
   console.log(claim);
   let node = $("<div/>");
-  node.addClass("col-sm-3 text-center col-margin-bottom-1");
-  node.append("<div><h3>You claimed " + claim + ".</h3></div>");
+  node.append("<div><h2>You claimed " + claim + "</h2></div>");
+  return node;
+}
+
+function renderClaimedEnvelope(index) {
+  console.log("rendering claimed envelope #: ", index);
+  RedEnvelope.deployed().then(function(i) {
+    i.getEnvelopeInfo.call(index).then(function(envelope) {
+      $("#claimed-envelope").html(buildClaimedEnvelope(envelope));
+      $("#claimed-envelope").show();
+    });
+  })
+}
+
+function buildClaimedEnvelope(env) {
+  const [id, creatorAddress, startTime, initialBalance, remainingBalance, totalClaims] = env;
+  let node = $("<div/>");
+
+  let node0 = $("<div/>");
+  node0.addClass("container-title");
+  node0.append("<div><h2>Claim Red Env #" + id + "</h2></div>");
+
+  let node1 = $("<div/>");
+  node1.addClass("envelope-info-area");
+  node1.append("<p><strong>Remaining amount:</strong></p>");
+  node1.append("<h2>" + remainingBalance + "ETH</h2>");
+  node1.append("<p><strong>Initial amount: </strong>" + initialBalance + "ETH</p>");
+  node1.append("<p><strong># of claims: </strong>" + totalClaims + "</p>");
+
+  let node2 = $("<div/>");
+  node2.addClass("left-align");
+  node2.append("<p><strong>From: </strong>" + creatorAddress + "</p>");
+  node2.append("<p><strong>Created at: </strong>" + moment(startTime).format('MM-DD-YYYY HH:MM:SS A') + "</p>");
+
+  node.append(node0);
+  node.append(node1);
+  node.append(node2);
   return node;
 }
 

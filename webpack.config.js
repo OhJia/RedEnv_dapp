@@ -1,3 +1,5 @@
+
+const webpack = require('webpack');
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
@@ -13,7 +15,8 @@ module.exports = {
       { from: './app/index.html', to: "index.html" },
       { from: './app/create.html', to: "create.html" },
       { from: './app/claim.html', to: "claim.html" },
-    ])
+    ]),
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
   ],
   module: {
     rules: [

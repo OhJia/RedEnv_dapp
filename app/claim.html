@@ -6,29 +6,65 @@
         <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
     </head>
     <body class="container" id="claim-page">
-        <h1>Red Envelope ETH</h1>
 
-        <div class="table-responsive">
-            <!-- Enter passcode for envelope -->
-            <div style="display: none;" class="alert alert-success" id="envelope-not-found"></div>
-            <div id="unlock-envelope">
-                <h2>Claim an envelope</h2>
-                <div style="display: none;" class="alert alert-success" id="passcode-not-match"></div>
-                <form id="claim-enter-passcode" action="">
-                  <input type="text" id="claim-passcode" placeholder="Enter the envelope passcode" required="required">
-                  <input type="submit" value="Enter">
-                </form>
+        <div class="container header">
+            <div class="row">
+                <div class="col-sm-6 black">
+                    <h3>Red Envelope</h3>
+                </div>
+                <div class="col-sm-6">
+                    <ul class="list-unstyled right-align">
+                        <li><h3><a href="/create.html">Create</a></h3></li>
+                        <li><h3><a href="/claim.html">Claim</a></h3></li>
+                        <li><p><a href="/">ENG</a></p></li>
+                        <li><p><a href="/">中文</a></p></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container content">
+            <div id="unlock-envelope" class="container-envelope">
+                <div class="container-title">
+                    <h2>Claim Red Env #<span id="claim-env-index"></span></h2>
+                    <p>This is the description.</p>
+                </div>
+                <!-- Enter passcode for envelope -->                
+                <form id="claim-enter-passcode">
+                    <div class="row">
+                        <div class="col-sm-9 container-input left-align">
+                            <input type="text" id="claim-passcode" 
+                            placeholder="Enter the envelope passcode"  
+                            onfocus="this.placeholder=''"
+                            onblur="this.placeholder='Enter the envelope passcode'" required="required">
+                        </div>
+                        <div class="col-sm-3 container-button">
+                            <button class="btn btn-env" type="submit">Enter</button>
+                        </div>  
+                    </div>                     
+                </form>                             
             </div>
 
-            <!-- Claim envelope -->
-            <div class="row" id="claim-button"></div>
+            <div style="display: none;" class="alert alert-success" id="envelope-not-found"></div>
+            
+            <!-- Envelope to claim -->
+            <div id="envelope-to-claim" class="container-envelope"></div>
 
             <!-- Claim info -->
-            <div class="row" id="claim-info"></div>
-
+            <div id="claim-info" class="container-envelope"></div>
             <!-- Claim envelope -->
-            <div class="row" id="claimed-envelope"></div>
+            <div id="claimed-envelope" class="container-envelope"></div>
+
+            <div class="container-social">
+                <ul class="list-unstyled">
+                    <li><h3><a href="/create.html">Twitter</a></h3></li>
+                    <li><h3><a href="/claim.html">Medium</a></h3></li>
+                    <li><h3><a href="/claim.html">Github</a></h3></li>
+                </ul>
+            </div>
+          
         </div>
+
     </body>
     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
     <script src="app.js"></script>

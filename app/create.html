@@ -6,17 +6,16 @@
         <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
     </head>
     <body class="container">
-        <!-- <div class="container"> -->
+        
         <div class="container header">
             <div class="row">
                 <div class="col-sm-6 black">
-                    <h2>Red Envelope</h2>
+                    <h3>Red Envelope</h3>
                 </div>
                 <div class="col-sm-6">
                     <ul class="list-unstyled right-align">
                         <li><h3><a href="/create.html">Create</a></h3></li>
                         <li><h3><a href="/claim.html">Claim</a></h3></li>
-                        <li><h3><a href="/claim.html">About</a></h3></li>
                         <li><p><a href="/">ENG</a></p></li>
                         <li><p><a href="/">中文</a></p></li>
                     </ul>
@@ -32,35 +31,37 @@
                 </div>
                 <div style="display: none;" class="alert alert-success" id="buy-msg"></div>
                
-                <form id="create-envelope" action="">
-                    <div class="container-input row">
-                        <div class="col-sm-3 right-align">
+                <form id="create-envelope">
+                    <div class="container-create-input row">
+                        <div class="col-sm-3 left-align">
                             <label for="amount">Amount:</label>
                         </div>
                         <div class="col-sm-7 left-align">
                             <input type="text" id="amount" 
+                                class="left-align"
                                 placeholder="0.005"  
                                 onfocus="this.placeholder=''"
                                 onblur="this.placeholder='0.005'" required="required">
                         </div>
-                        <div class="col-sm-2">
+                        <div class="col-sm-2 right-align">
                             <label for="amount">ETH</label>
                         </div>
                     </div>
-                    <div class="container-input row">
-                        <div class="col-sm-3 right-align">
+                    <div class="container-create-input row">
+                        <div class="col-sm-3 left-align">
                             <label for="passcode">Passcode:</label>
                         </div>
                         <div class="col-sm-7 left-align">
-                            <input type="passcode" id="passcode" 
+                            <input type="password" id="passcode" 
+                                class="left-align"
                                 placeholder="verygoodpasscode" 
                                 onfocus="this.placeholder=''"
                                 onblur="this.placeholder='verygoodpasscode'"
                                 required="required">
                         </div>
-                        <div class="col-sm-2">
+                        <div class="col-sm-2 right-align">
                             <input type="button"
-                                onclick="if(passcode.type=='text') {passcode.type='passcode';
+                                onclick="if(passcode.type=='text') {passcode.type='password';
                                     this.value='show';
                                 } else {
                                     passcode.type='text';
@@ -68,11 +69,18 @@
                                 }"
                                 value="show"
                             >
-
+                            <!-- <i class="material-icons">remove_red_eye</i> -->
+                            <!-- <button onclick="if(passcode.type=='text') {passcode.type='password';
+                                } else {
+                                    passcode.type='text';
+                                }"
+                            >
+                                <i class="material-icons md-dark">remove_red_eye</i>
+                            </button> -->
                         </div>
                     </div>
                   <!-- <input type="submit" value="Create"> -->
-                  <button type="submit" class="btn btn-env">CREATE</button>
+                  <button type="submit" class="btn btn-env">create</button>
                 </form>
             </div>
             
@@ -92,15 +100,5 @@
     </body>
 
     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
-    <script>
-        // function copyToClipboard(element) {
-        //     console.log("pressed!", $(element).val());
-        //     var $temp = $("<input>");
-        //     $("body").append($temp);
-        //     $temp.val($(element).val()).select();
-        //     document.execCommand("copy");
-        //     $temp.remove();
-        // }
-    </script>
     <script src="app.js"></script>
 </html>

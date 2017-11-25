@@ -1,17 +1,29 @@
+@import url('https://fonts.googleapis.com/css?family=Space+Mono|Material+Icons');
+
 body {
   margin-left: 25%;
   margin-right: 25%;
   margin-top: 10%;
   background-color: #F5F7FA;
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Space Mono', monospace;
 }
 
 input, textarea, select, button, a { outline: none; }
+
+button {
+  border: none;
+  background-color: transparent;
+}
+
+.material-icons.md-dark { 
+  color: #4A4A4A; 
+}
 
 label {
   display: inline-block;
   width: 100px;
   color: #4A4A4A;
+  font-size: 16px;
 }
 
 input {
@@ -19,7 +31,11 @@ input {
   border: none;
   padding-top: 0px;
   padding-left: 15px; 
-  color: #4A4A4A; 
+  color: #4A4A4A;  
+}
+
+::placeholder { /* Most modern browsers support this now. */
+   color: #D8D8D8;
 }
 
 h1, h2 {
@@ -27,6 +43,7 @@ h1, h2 {
   vertical-align: middle;
   margin-top: 10px;
   margin-bottom: 10px;
+  font-style: bold;
 }
 
 h2 {
@@ -38,10 +55,12 @@ h3 {
   font-weight: normal;
   color: #4A4A4A;
   font-size: 18px;
+  font-style: bold;
 }
 
 p {
-  color: #4A4A4A;
+  color: #8C8C8C;
+  font-size: 16px;
 }
 
 a {
@@ -51,13 +70,10 @@ a {
 }
 
 a:hover {
-  color: #EC4331;
+  color: rgb(235, 66, 62);
   text-decoration: none;
 }
 
-.black {
-  color: #4A4A4A;
-}
 
 /***********************************
   Header
@@ -93,29 +109,41 @@ a:hover {
 #container-create {
   text-align: center;
   margin: auto;
-  width: 80%;
+  width: 42em;
   min-height: 350px;
 }
 
 #container-create #create-envelope {
-  background-color: #F85947;
+  /*background-color: #F85947;*/
+  background-color: #fff;
   min-height: 300px;
   padding: 35px 15px;
-  box-shadow: 0px 1px 20px 1px rgba(0, 0, 0, 0.1);
+  /*box-shadow: 0px 1px 20px 1px rgba(0, 0, 0, 0.1);*/
+  box-shadow: 0 20px 50px 0 rgba(0,0,0,0.12);
+  border-radius: 5px;
 }
 
 .container-title {
   margin-bottom: 20px;
 }
 
+.container-create-input {
+  background-color: #fff;
+  border-radius: 0;
+  height: 40px;
+  margin: 30px 40px;
+  padding: 8px 5px;
+  border-bottom: 1px solid #4A4A4A;
+}
+
 .container-input {
   background-color: #fff;
-  border-radius: 12px;
-  height: 50px;
-  margin: 30px auto;
-  /*width: 80%;*/
-  padding: 15px 5px;
+  border-radius: 5px;
+  height: 40px;
+  margin: 30px 0px;
+  padding: 8px 5px;
 }
+
 .container-input input {
   width: 100%;
 }
@@ -123,14 +151,13 @@ a:hover {
 .container-button {
   margin: 30px auto;
 }
-.container-button .btn {
+/*.container-button .btn {
   width: 100%;
   height: 50px;
-  padding: 15px 5px;
-  border-radius: 12px;
+  border-radius: 5px;
   box-shadow: none;
   outline: none;
-}
+}*/
 
 /*
  * Envelope info
@@ -139,23 +166,36 @@ a:hover {
 .container-envelope {
   text-align: center;
   margin: auto;
-  width: 80%;
-  min-height: 350px;
+  width: 40em;
+  min-height: 50px;
 }
 
 .envelope-info-area {
   background-color: #F85947;
   min-height: 300px;
   padding: 35px 15px;
-  box-shadow: 0px 1px 20px 1px rgba(0, 0, 0, 0.1);
+  /*box-shadow: 0px 1px 20px 1px rgba(0, 0, 0, 0.1);*/
+  box-shadow: 0 20px 50px 0 rgba(0,0,0,0.12);
+  border-radius: 5px;
 }
+
+/*
+ * Claim envelope
+ */
+
+/*#unlock-envelope {
+  text-align: center;
+  margin: auto;
+  width: 80%;
+  min-height: 350px;
+}*/
 
 /*
  * Social links
  */
 
 .container-social {
-  margin: 5em auto;
+  margin: 0 auto;
   width: 50%;
   text-align: center;
 }
@@ -177,10 +217,12 @@ a:hover {
 
 .right-align {
   text-align: right;
+  padding-right: 0;
 }
 
 .left-align {
   text-align: left;
+  padding-left: 0;
 }
 
 .btn {
@@ -200,11 +242,12 @@ a:hover {
 }
 
 .btn-env {
-  background-color: #D0011B;
+  background-color: rgb(235, 66, 62);
   color: #fff;
-  font-size: 18px;
+  font-size: 12px;
+  text-transform: uppercase;
   border: none;
-  border-radius: 10px;
+  border-radius: 5px;
 }
 
 
