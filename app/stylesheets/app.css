@@ -21,8 +21,8 @@ button {
 
 label {
   display: inline-block;
-  width: 100px;
   color: #4A4A4A;
+  /*color: #395CAA;*/
   font-size: 16px;
 }
 
@@ -32,6 +32,8 @@ input {
   padding-top: 0px;
   padding-left: 15px; 
   color: #4A4A4A;  
+  /*color: #395CAA;*/
+  background-color: transparent;
 }
 
 ::placeholder { /* Most modern browsers support this now. */
@@ -47,24 +49,28 @@ h1, h2 {
 }
 
 h2 {
-  color: #4A4A4A;
+  /*color: #4A4A4A;*/
+  color: rgb(235, 66, 62);
   font-size: 32px;
 }
 
 h3 {
   font-weight: normal;
-  color: #4A4A4A;
+  /*color: #4A4A4A;*/
+  color: rgb(235, 66, 62);
   font-size: 18px;
   font-style: bold;
 }
 
 p {
-  color: #8C8C8C;
+  /*color: #8C8C8C;*/
+  color: rgb(235, 66, 62);
   font-size: 16px;
 }
 
 a {
-  color: #4A4A4A;
+  /*color: #4A4A4A;*/
+  color: rgb(235, 66, 62);
   -webkit-transition-duration: 0.4s; /* Safari */
   transition-duration: 0.4s;
 }
@@ -86,7 +92,7 @@ a:hover {
   top: 0px;
   left: 0px;
   right: 0px;
-  padding: 1em;
+  padding: 0.5em;
 }
 
 /***********************************
@@ -98,7 +104,7 @@ a:hover {
   position: absolute;
   left: 0px;
   right: 0px;
-  padding: 15px 50px;
+  padding: 0 50px;
   width: 100%;
 }
 
@@ -127,13 +133,17 @@ a:hover {
   margin-bottom: 20px;
 }
 
-.container-create-input {
-  background-color: #fff;
-  border-radius: 0;
-  height: 40px;
+.container-create-field {
   margin: 30px 40px;
-  padding: 8px 5px;
-  border-bottom: 1px solid #4A4A4A;
+}
+
+.container-create-input {
+  background-color: #F6F6F7;
+  border-radius: 5px;
+  height: 40px;
+  padding: 8px 15px;
+  /*border-bottom: 1px solid #4A4A4A;*/
+  /*border-bottom: 1px solid #395CAA;*/ 
 }
 
 .container-input {
@@ -150,6 +160,11 @@ a:hover {
 
 .container-button {
   margin: 30px auto;
+}
+
+.label-sub {
+  font-size: 12px;
+  color: #9B9B9B;
 }
 /*.container-button .btn {
   width: 100%;
@@ -170,13 +185,31 @@ a:hover {
   min-height: 50px;
 }
 
+#envelope-link {
+  margin-bottom: 2em;
+}
+
 .envelope-info-area {
   background-color: #F85947;
-  min-height: 300px;
-  padding: 35px 15px;
-  /*box-shadow: 0px 1px 20px 1px rgba(0, 0, 0, 0.1);*/
+  min-height: 16em;
+  padding: 85px 15px 35px 15px;
   box-shadow: 0 20px 50px 0 rgba(0,0,0,0.12);
   border-radius: 5px;
+  width: 15em;
+  margin: 0 auto;
+}
+
+.envelope-info-area h2, .envelope-info-area p {
+  color: #fff;
+}
+
+.envelope-detail-area {
+  margin: 2em 6em;
+}
+
+.envelope-detail-area p {
+  color: rgb(235, 66, 62);
+  font-size: 14px;
 }
 
 /*

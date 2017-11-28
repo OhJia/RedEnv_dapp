@@ -7,6 +7,7 @@ import { default as contract } from 'truffle-contract'
 import redenvelope_artifacts from '../../build/contracts/RedEnvelope.json'
 
 import { default as moment } from 'moment';
+import { default as BigNumber } from 'bignumber.js';
 
 var RedEnvelope = contract(redenvelope_artifacts);
 
@@ -85,7 +86,7 @@ window.App = {
     var self = this;
 
     let amountToBuy = params.amount;
-    let amountInWei = web3.toWei(amountToBuy, 'ether');   
+    let amountInWei = web3.toWei(amountToBuy, 'gwei');   
     let passcode = params.passcode.toString();
 
     console.log("params:", params);
@@ -96,7 +97,7 @@ window.App = {
       i.buyEnvelope(passcode, {from: web3.eth.accounts[0], value: amountInWei}).then(function(f) {
         //$("#buy-msg").html("");
         $("#container-create").hide();
-        generateEnvelopeLink();
+        renderEnvelopeLink();
       }).catch(function(e) {
         console.log(e);
         self.setStatus("Error sending coin; see log.");
@@ -164,66 +165,48 @@ window.App = {
   RENDER ENVELOPE INFO AFTER CREATE
 
 ****************************************************/
-function generateEnvelopeLink() {  
+function renderEnvelopeLink() {  
   RedEnvelope.deployed().then(function(i) {
     i.envelopeIndex.call().then(function(index) {
       console.log("index is at: ", index);
       const link = "/claim.html?env-id=" + index;
       $("#envelope-link").append(buildEnvelopeLink(link));
-      renderEnvelope(index);
+      renderEnvelopeCreated(index);
     });
   })
 }
 
 function buildEnvelopeLink(link) {
   let node = $("<div/>");
+
+  let linkField = $("<div/>");
+  linkField.addClass("row");
   let node1 = $("<div/>");
   node1.addClass("col-sm-9 container-input left-align");
   node1.append("<input type='text' id='envelope-link-field' value=" + link + ">");
   let node2 = $("<div/>");
   node2.addClass("col-sm-3 container-button");
   node2.append(`<button id='copyBtn' class='btn btn-env' onclick='copyToClipboard("#envelope-link-field")'>COPY</button>`);
-  node.append(node1);
-  node.append(node2);
+  
+  linkField.append(node1);
+  linkField.append(node2);
+
+  const labelText = "Send the link to as many people you want to give lucky Ether to. They will need the passcode to claim it."
+  let node3 = $("<div/>");
+  node3.append(`<p class='label-sub'>${labelText}</p>`);
+  
+  node.append(linkField);
+  node.append(node3);
   return node;
 }
 
-function renderEnvelope(index) {
+function renderEnvelopeCreated(index) {
   RedEnvelope.deployed().then(function(i) {
-    i.getEnvelopeInfo.call(index).then(function(p) {
-      $("#envelope-info").append(buildEnvelope(p));
+    i.getEnvelopeInfo.call(index).then(function(envelope) {
+      $("#envelope-info").append(buildEnvelope(envelope, "create"));
     });
   })
 }
-
-function buildEnvelope(env) {
-  console.log(env);
-  const [id, creatorAddress, startTime, initialBalance, remainingBalance] = env;
-  
-  let node = $("<div/>");
-
-  let node0 = $("<div/>");
-  node0.addClass("container-title");
-  node0.append("<h2>Red Env #" + id + "</h2>");
-  
-  let node1 = $("<div/>");
-  node1.addClass("left-align");
-  node1.append("<p><strong>From: </strong>" + creatorAddress + "</p>");
-  node1.append("<p><strong>Created at: </strong>" + moment(startTime).format('MM-DD-YYYY HH:MM:SS A') + "</p>");
-  
-  let node2 = $("<div/>");
-  node2.addClass("envelope-info-area");
-  node2.append("<p><strong>Remaining amount:</strong></p>");
-  node2.append("<h2>" + remainingBalance + "ETH</h2>");
-  node2.append("<p><strong>Initial amount: </strong>" + initialBalance + "ETH</p>");
-  // node2.append("<p><strong># of claims: </strong>" + env[5] + "</p>");
-
-  node.append(node0);
-  node.append(node1);
-  node.append(node2);
-  return node;
-}
-
 
 
 /***************************************************
@@ -255,37 +238,10 @@ function renderEnvelopeToClaim(index) {
   console.log("rendering claim envelope #: ", index);
   RedEnvelope.deployed().then(function(i) {
     i.getEnvelopeInfo.call(index).then(function(envelope) {
-      $("#envelope-to-claim").html(buildEnvelopeToClaim(envelope));
+      $("#envelope-to-claim").html(buildEnvelope(envelope, "claim"));
       $("#envelope-to-claim").show();
     });
   })
-}
-
-function buildEnvelopeToClaim(env) {
-  const [id, creatorAddress, startTime, initialBalance, remainingBalance, totalClaims] = env;
-  let node = $("<div/>");
-
-  let node0 = $("<div/>");
-  node0.addClass("container-title");
-  node0.append("<div><h2>Claim Red Env #" + id + "</h2></div>");
-  node0.append("<div id='claim-button'><button id='claim' class='btn btn-env' onclick='App.claim(" + id + ")'>Claim</button></div>");
-
-  let node1 = $("<div/>");
-  node1.addClass("envelope-info-area");
-  node1.append("<p><strong>Remaining amount:</strong></p>");
-  node1.append("<h2>" + remainingBalance + "ETH</h2>");
-  node1.append("<p><strong>Initial amount: </strong>" + initialBalance + "ETH</p>");
-  node1.append("<p><strong># of claims: </strong>" + totalClaims + "</p>");
-
-  let node2 = $("<div/>");
-  node2.addClass("left-align");
-  node2.append("<p><strong>From: </strong>" + creatorAddress + "</p>");
-  node2.append("<p><strong>Created at: </strong>" + moment(startTime).format('MM-DD-YYYY HH:MM:SS A') + "</p>");
-
-  node.append(node0);
-  node.append(node1);
-  node.append(node2);
-  return node;
 }
 
 
@@ -305,8 +261,12 @@ function buildEnvelopeToClaim(env) {
 
 function buildClaimInfo(claim) {
   console.log(claim);
+  let claimAmountEth = new BigNumber(web3.fromWei(claim, 'ether')).toFormat(8);
+  let claimAmountGwei = new BigNumber(web3.fromWei(claim, 'gwei')).toFormat(2);
+  
   let node = $("<div/>");
-  node.append("<div><h2>You claimed " + claim + "</h2></div>");
+  node.append(`<div><h2>You claimed ${claimAmountEth} ETH</h2></div>`);
+  node.append(`<div><p>${claimAmountGwei} GWEI</p></div>`);
   return node;
 }
 
@@ -314,37 +274,69 @@ function renderClaimedEnvelope(index) {
   console.log("rendering claimed envelope #: ", index);
   RedEnvelope.deployed().then(function(i) {
     i.getEnvelopeInfo.call(index).then(function(envelope) {
-      $("#claimed-envelope").html(buildClaimedEnvelope(envelope));
+      $("#claimed-envelope").html(buildEnvelope(envelope, "claimed"));
       $("#claimed-envelope").show();
     });
   })
 }
 
-function buildClaimedEnvelope(env) {
+
+/***************************************************
+  BUILD ENVELOPE COMPONENTS
+
+****************************************************/
+
+function buildEnvelope(env, step) {
+  console.log(env);
   const [id, creatorAddress, startTime, initialBalance, remainingBalance, totalClaims] = env;
+  let remainingBalanceEth = new BigNumber(web3.fromWei(remainingBalance, 'ether')).toFormat(4);
+  let remainingBalanceGwei = new BigNumber(web3.fromWei(remainingBalance, 'gwei')).toFormat(2);
+
+  let titleText = "";
+  let claimButton = "";
+  let initialBalanceText = "";
+  let totalClaimsText = "";
+  let initialBalanceEth = null;
+  let initialBalanceGwei = null;
+
+  if (step == "create") { titleText = `<h2>Red Env #${id} created</h2>`; } 
+  else if (step == "claim") { 
+    titleText = `<h2>Claim Red Env #${id}</h2>`; 
+    claimButton = `<div id='claim-button'><button id='claim' class='btn btn-env' onclick='App.claim(${id})'>Claim</button></div>`
+  } else if (step == "claimed") { 
+    titleText = `<h2>from Red Env #${id}</h2>`; 
+    initialBalanceEth = new BigNumber(web3.fromWei(initialBalance, 'ether')).toFormat(4);
+    initialBalanceGwei = new BigNumber(web3.fromWei(initialBalance, 'gwei')).toFormat(0);
+    initialBalanceText = `<p><strong>Initial balance: </strong>${initialBalanceEth} ETH (${initialBalanceGwei} GWEI)</p>`;
+    totalClaimsText = `<p><strong># of claims: </strong>${totalClaims}</p>`;
+  }
+  
   let node = $("<div/>");
 
-  let node0 = $("<div/>");
-  node0.addClass("container-title");
-  node0.append("<div><h2>Claim Red Env #" + id + "</h2></div>");
+  let title = $("<div/>");
+  title.addClass("container-title");
+  title.append(titleText);
 
-  let node1 = $("<div/>");
-  node1.addClass("envelope-info-area");
-  node1.append("<p><strong>Remaining amount:</strong></p>");
-  node1.append("<h2>" + remainingBalance + "ETH</h2>");
-  node1.append("<p><strong>Initial amount: </strong>" + initialBalance + "ETH</p>");
-  node1.append("<p><strong># of claims: </strong>" + totalClaims + "</p>");
+  let envInfo = $("<div/>");
+  envInfo.addClass("envelope-info-area");
+  // envInfo.append("<p><strong>Remaining amount:</strong></p>");
+  envInfo.append(claimButton);
+  envInfo.append(`<h2>${remainingBalanceEth} ETH</h2>`);
+  envInfo.append(`<p><strong>${remainingBalanceGwei} GWEI</strong></p>`);
+  
+  let envDetails = $("<div/>");
+  envDetails.addClass("envelope-detail-area left-align");
+  envDetails.append(`<p><strong>From: </strong>${creatorAddress}</p>`);
+  envDetails.append(`<p><strong>Created at: </strong>${moment(startTime).format('MM-DD-YYYY HH:MM:SS A')}</p>`);
+  envDetails.append(initialBalanceText);
+  envDetails.append(totalClaimsText);
 
-  let node2 = $("<div/>");
-  node2.addClass("left-align");
-  node2.append("<p><strong>From: </strong>" + creatorAddress + "</p>");
-  node2.append("<p><strong>Created at: </strong>" + moment(startTime).format('MM-DD-YYYY HH:MM:SS A') + "</p>");
-
-  node.append(node0);
-  node.append(node1);
-  node.append(node2);
+  node.append(title);
+  node.append(envInfo);
+  node.append(envDetails);
   return node;
 }
+
 
 /***************************************************
   ON LOAD

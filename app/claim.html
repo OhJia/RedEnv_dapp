@@ -16,8 +16,8 @@
                     <ul class="list-unstyled right-align">
                         <li><h3><a href="/create.html">Create</a></h3></li>
                         <li><h3><a href="/claim.html">Claim</a></h3></li>
-                        <li><p><a href="/">ENG</a></p></li>
-                        <li><p><a href="/">中文</a></p></li>
+                        <!-- <li><p><a href="/">ENG</a></p></li>
+                        <li><p><a href="/">中文</a></p></li> -->
                     </ul>
                 </div>
             </div>
@@ -27,16 +27,41 @@
             <div id="unlock-envelope" class="container-envelope">
                 <div class="container-title">
                     <h2>Claim Red Env #<span id="claim-env-index"></span></h2>
-                    <p>This is the description.</p>
+                    <!-- <p>This is the description.</p> -->
                 </div>
                 <!-- Enter passcode for envelope -->                
                 <form id="claim-enter-passcode">
                     <div class="row">
                         <div class="col-sm-9 container-input left-align">
-                            <input type="text" id="claim-passcode" 
+                            <div class="col-sm-10">
+                                <input type="password" id="claim-passcode" 
+                                    class="left-align"
+                                    placeholder="Enter the envelope passcode" 
+                                    onfocus="this.placeholder=''"
+                                    onblur="this.placeholder='Enter the envelope passcode'"
+                                    required="required">
+                            </div>
+                            <div class="col-sm-2 right-align">
+                                <button
+                                    onclick="event.preventDefault();var p=document.getElementById('claim-passcode');if(p.type==='text') {
+                                        p.type='password';
+                                        this.style.opacity=.25
+                                    } else {
+                                        p.type='text';
+                                        this.style.opacity=1;
+                                    }
+                                    return false;"
+                                >
+                                    <svg fill="#4A4A4A" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M0 0h24v24H0z" fill="none"/>
+                                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                           <!--  <input type="text" id="claim-passcode" 
                             placeholder="Enter the envelope passcode"  
                             onfocus="this.placeholder=''"
-                            onblur="this.placeholder='Enter the envelope passcode'" required="required">
+                            onblur="this.placeholder='Enter the envelope passcode'" required="required"> -->
                         </div>
                         <div class="col-sm-3 container-button">
                             <button class="btn btn-env" type="submit">Enter</button>
