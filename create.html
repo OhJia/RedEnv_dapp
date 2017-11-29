@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Red Envelope - Spread decentralized fortune</title>
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+        <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+        <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
+        <script src="app.js"></script>
+
+    </head>
+    <body class="container">
+        
+        <div class="container header">
+            <div class="row">
+                <div class="col-sm-6 black">
+                    <h3>Red Envelope</h3>
+                </div>
+                <div class="col-sm-6">
+                    <ul class="list-unstyled right-align">
+                        <li><h3><a href="/create.html">Create</a></h3></li>
+                        <li><h3><a href="/claim.html">Claim</a></h3></li>
+                        <!-- <li><p><a href="/">ENG</a></p></li>
+                        <li><p><a href="/">中文</a></p></li> -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="container content">
+            <div id="container-create">
+                <div class="container-title">
+                    <h2>Create an envelope</h2>
+                    <p>Deposit Ether into your red envelope.</p>
+                </div>
+                <div style="display: none;" class="alert alert-success" id="buy-msg"></div>
+               
+                <form id="create-envelope">
+                    <div class="container-create-field left-align row">
+                        <label for="amount">Enter the total amount you want to give:
+                        </label>
+                    
+                        <div class="container-create-input row">
+                            <div class="col-sm-10 left-align">
+                                <input type="number" id="amount" 
+                                    class="left-align"
+                                    placeholder="50000000"  
+                                    onfocus="this.placeholder=''"
+                                    onblur="this.placeholder='50000000'" required="required">
+                            </div>
+                            <div class="col-sm-2 right-align">
+                                <label for="amount">GWEI</label>
+                            </div>
+                        </div>
+                        <label for="amount"><span class="label-sub">1 ETH = 1e9 GWEI</span></label>
+                    </div>
+                    <div class="container-create-field left-align row">
+                        <label for="passcode">Enter an unique passcode:
+                        </label>
+                        <div class="container-create-input row">
+                            <div class="col-sm-10 left-align">
+                                <input type="password" id="passcode" 
+                                    class="left-align"
+                                    placeholder="verygoodpasscode" 
+                                    onfocus="this.placeholder=''"
+                                    onblur="this.placeholder='verygoodpasscode'"
+                                    required="required">
+                            </div>
+                            <div class="col-sm-2 right-align">
+                                <button
+                                    onclick="event.preventDefault();var p=document.getElementById('passcode');if(passcode.type==='text') {
+                                        passcode.type='password';
+                                        this.style.opacity=.25
+                                    } else {
+                                        passcode.type='text';
+                                        this.style.opacity=1;
+                                    }
+                                    return false;"
+                                >
+                                    <svg fill="#4A4A4A" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M0 0h24v24H0z" fill="none"/>
+                                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <label for="passcode"><span class="label-sub">You passcode is not stored, so do not forget it!</span></label>
+                    </div>
+                  <button type="submit" class="btn btn-env">create</button>
+                </form>
+            </div>
+            
+            <div class="container-envelope">
+                <div class="row" id="envelope-link"></div>
+                <div class="row" id="envelope-info"></div>               
+            </div>
+
+            <div class="container-social">
+                <ul class="list-unstyled">
+                    <li><h3><a href="/create.html">Twitter</a></h3></li>
+                    <li><h3><a href="/claim.html">Medium</a></h3></li>
+                    <li><h3><a href="/claim.html">Github</a></h3></li>
+                </ul>
+            </div>
+        </div>
+    </body>
+</html>
