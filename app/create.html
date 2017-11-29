@@ -4,6 +4,9 @@
         <title>Red Envelope - Spread decentralized fortune</title>
         <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
         <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+        <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
+        <script src="app.js"></script>
+
     </head>
     <body class="container">
         
@@ -37,11 +40,8 @@
                         </label>
                     
                         <div class="container-create-input row">
-                            <!-- <div class="col-sm-3 left-align">
-                                <label for="amount">Amount:</label>
-                            </div> -->
                             <div class="col-sm-10 left-align">
-                                <input type="text" id="amount" 
+                                <input type="number" id="amount" 
                                     class="left-align"
                                     placeholder="50000000"  
                                     onfocus="this.placeholder=''"
@@ -57,9 +57,6 @@
                         <label for="passcode">Enter an unique passcode:
                         </label>
                         <div class="container-create-input row">
-                            <!-- <div class="col-sm-3 left-align">
-                                <label for="passcode">Passcode:</label>
-                            </div> -->
                             <div class="col-sm-10 left-align">
                                 <input type="password" id="passcode" 
                                     class="left-align"
@@ -106,7 +103,4 @@
             </div>
         </div>
     </body>
-
-    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
-    <script src="app.js"></script>
 </html>

@@ -15,6 +15,11 @@ button {
   background-color: transparent;
 }
 
+button:active, button:focus {
+  outline: none !important;
+  text-decoration: none;
+}
+
 .material-icons.md-dark { 
   color: #4A4A4A; 
 }
@@ -22,7 +27,6 @@ button {
 label {
   display: inline-block;
   color: #4A4A4A;
-  /*color: #395CAA;*/
   font-size: 16px;
 }
 
@@ -32,12 +36,18 @@ input {
   padding-top: 0px;
   padding-left: 15px; 
   color: #4A4A4A;  
-  /*color: #395CAA;*/
   background-color: transparent;
 }
 
 ::placeholder { /* Most modern browsers support this now. */
    color: #D8D8D8;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
 
 h1, h2 {
@@ -49,34 +59,30 @@ h1, h2 {
 }
 
 h2 {
-  /*color: #4A4A4A;*/
   color: rgb(235, 66, 62);
   font-size: 32px;
 }
 
 h3 {
   font-weight: normal;
-  /*color: #4A4A4A;*/
   color: rgb(235, 66, 62);
   font-size: 18px;
   font-style: bold;
 }
 
 p {
-  /*color: #8C8C8C;*/
   color: rgb(235, 66, 62);
   font-size: 16px;
 }
 
 a {
-  /*color: #4A4A4A;*/
   color: rgb(235, 66, 62);
   -webkit-transition-duration: 0.4s; /* Safari */
   transition-duration: 0.4s;
 }
 
 a:hover {
-  color: rgb(235, 66, 62);
+  color: #4A4A4A;
   text-decoration: none;
 }
 
@@ -87,6 +93,7 @@ a:hover {
 ************************************/
 
 .header {
+  z-index: 100;
   height: 8em;
   position: fixed;
   top: 0px;
@@ -120,11 +127,9 @@ a:hover {
 }
 
 #container-create #create-envelope {
-  /*background-color: #F85947;*/
   background-color: #fff;
   min-height: 300px;
   padding: 35px 15px;
-  /*box-shadow: 0px 1px 20px 1px rgba(0, 0, 0, 0.1);*/
   box-shadow: 0 20px 50px 0 rgba(0,0,0,0.12);
   border-radius: 5px;
 }
@@ -142,8 +147,6 @@ a:hover {
   border-radius: 5px;
   height: 40px;
   padding: 8px 15px;
-  /*border-bottom: 1px solid #4A4A4A;*/
-  /*border-bottom: 1px solid #395CAA;*/ 
 }
 
 .container-input {
@@ -166,13 +169,6 @@ a:hover {
   font-size: 12px;
   color: #9B9B9B;
 }
-/*.container-button .btn {
-  width: 100%;
-  height: 50px;
-  border-radius: 5px;
-  box-shadow: none;
-  outline: none;
-}*/
 
 /*
  * Envelope info
@@ -204,7 +200,7 @@ a:hover {
 }
 
 .envelope-detail-area {
-  margin: 2em 6em;
+  margin: 2em 5em;
 }
 
 .envelope-detail-area p {
@@ -212,16 +208,10 @@ a:hover {
   font-size: 14px;
 }
 
-/*
- * Claim envelope
- */
+.claim-sub-area {
+  margin: 6em 5em;
+}
 
-/*#unlock-envelope {
-  text-align: center;
-  margin: auto;
-  width: 80%;
-  min-height: 350px;
-}*/
 
 /*
  * Social links
@@ -270,7 +260,7 @@ a:hover {
   background-color: #B5061C;
 }
 
-.btn:select, .btn:active, .btn:selected {
+.btn:select, .btn:active, .btn:selected, .btn:focus {
   outline: none;
 }
 

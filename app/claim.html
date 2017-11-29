@@ -4,6 +4,8 @@
         <title>Red Envelope - Spread decentralized fortune</title>
         <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
         <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+        <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
+        <script src="app.js"></script>
     </head>
     <body class="container" id="claim-page">
 
@@ -24,12 +26,25 @@
         </div>
 
         <div class="container content">
+            <!-- Default claim page -->
+            <div id="claim-default" class="container-envelope">
+                <div class="container-title">
+                    <h2>Claim an envelope</h2>
+                    <p>Paste the URL you received into the search bar.</p> 
+                    <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1476 399"><defs><style>.cls-1{fill:#d8d8d8;}.cls-2{fill:#e1e7ec;}.cls-3{fill:#eb423e;}.cls-4{fill:#fbb03b;}.cls-5{fill:#7ac943;}.cls-6{fill:#fff;}.cls-7{fill:none;stroke:#eb423e;stroke-miterlimit:10;stroke-width:5px;}</style></defs><title>sb</title><rect class="cls-1" x="18" y="15" width="1438" height="159" rx="12" ry="12"/><rect class="cls-2" x="18" y="105" width="1437" height="169"/><circle class="cls-3" cx="66" cy="61" r="18"/><circle class="cls-4" cx="116" cy="61" r="18"/><circle class="cls-5" cx="166" cy="61" r="18"/><polygon class="cls-2" points="208 115 252 41 456 41 497 112 208 115"/><rect class="cls-6" x="192" y="129" width="1138" height="90" rx="12" ry="12"/><path class="cls-7" d="M715.5,173.75c0,114.74-93,207.75-207.75,207.75"/><polygon class="cls-3" points="715.33 158 695.7 192 734.96 192 715.33 158"/></svg>
+                </div>
+                <div class="claim-sub-area">
+                    <p>Didn't receive an URL? Create your own.</p> 
+                    <button class="btn btn-env" onclick="window.location='/create.html';">create an envelope</button>
+                </div>
+            </div>
+
             <div id="unlock-envelope" class="container-envelope">
                 <div class="container-title">
                     <h2>Claim Red Env #<span id="claim-env-index"></span></h2>
-                    <!-- <p>This is the description.</p> -->
                 </div>
-                <!-- Enter passcode for envelope -->                
+                <!-- Enter passcode for envelope -->  
+                <div style="display: none;" id="passcode-not-match" class="alert"></div>              
                 <form id="claim-enter-passcode">
                     <div class="row">
                         <div class="col-sm-9 container-input left-align">
@@ -58,27 +73,23 @@
                                     </svg>
                                 </button>
                             </div>
-                           <!--  <input type="text" id="claim-passcode" 
-                            placeholder="Enter the envelope passcode"  
-                            onfocus="this.placeholder=''"
-                            onblur="this.placeholder='Enter the envelope passcode'" required="required"> -->
                         </div>
                         <div class="col-sm-3 container-button">
-                            <button class="btn btn-env" type="submit">Enter</button>
+                            <button class="btn btn-env" type="submit">enter</button>
                         </div>  
                     </div>                     
                 </form>                             
             </div>
 
-            <div style="display: none;" class="alert alert-success" id="envelope-not-found"></div>
+            <div style="display: none;" id="envelope-not-found" class="container-envelope"></div>
             
             <!-- Envelope to claim -->
-            <div id="envelope-to-claim" class="container-envelope"></div>
+            <div style="display: none;" id="envelope-to-claim" class="container-envelope"></div>
 
             <!-- Claim info -->
-            <div id="claim-info" class="container-envelope"></div>
+            <div style="display: none;" id="claim-info" class="container-envelope"></div>
             <!-- Claim envelope -->
-            <div id="claimed-envelope" class="container-envelope"></div>
+            <div style="display: none;" id="claimed-envelope" class="container-envelope"></div>
 
             <div class="container-social">
                 <ul class="list-unstyled">
@@ -91,6 +102,4 @@
         </div>
 
     </body>
-    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
-    <script src="app.js"></script>
 </html>
