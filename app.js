@@ -37400,6 +37400,7 @@ function renderEnvelopeLink () {
     i.envelopeIndex.call().then((index) => {
       console.log('index is at: ', index);
       const urlPath = window.location.href.split('/').slice(0, -1).join('/');
+      console.log("urlPath: ", urlPath);
       const link = `${urlPath}/claim.html?env-id=${index}`;
       $('#envelope-link').append(buildEnvelopeLink(link));
       renderEnvelopeCreated(index);
