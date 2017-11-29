@@ -37399,7 +37399,8 @@ function renderEnvelopeLink () {
   RedEnvelope.deployed().then((i) => {
     i.envelopeIndex.call().then((index) => {
       console.log('index is at: ', index);
-      const link = `/claim.html?env-id=${index}`;
+      const urlPath = window.location.href.split('/').slice(0, -1).join('/');
+      const link = `${urlPath}/claim.html?env-id=${index}`;
       $('#envelope-link').append(buildEnvelopeLink(link));
       renderEnvelopeCreated(index);
     });
