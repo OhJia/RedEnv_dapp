@@ -6,7 +6,7 @@
 body {
   margin-left: 25%;
   margin-right: 25%;
-  margin-top: 10%;
+  margin-top: 6%;
   background-color: #F5F7FA;
   font-family: 'Roboto Mono', monospace;
 }
@@ -130,7 +130,7 @@ a:hover {
   z-index: 1;
   height: 8em;
   /*position: fixed;*/
-  top: 4em;
+  top: 0em;
   left: 0px;
   right: 0px;
   padding: 0.5em;
