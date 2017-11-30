@@ -8,11 +8,14 @@
         <script src="app.js"></script>
     </head>
     <body class="container" id="claim-page">
-
+        <div id="metamask-info-area"></div>
         <div class="container header">
             <div class="row">
-                <div class="col-sm-6 black">
-                    <h3>Red Envelope</h3>
+                <div class="col-sm-6 row">
+                    <div style="display: inline-block">
+                        <svg class="coin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 342 388"><defs><style>.header-1{fill:#fbb03b;}.header-2{fill:#fff;}</style></defs><circle class="header-1" cx="171" cy="199" r="155"/><rect class="header-2" x="136" y="141.11" width="72" height="22.71"/><rect class="header-2" x="136" y="188.64" width="72" height="22.71"/><rect class="header-2" x="136" y="236.17" width="72" height="22.71"/></svg>
+                    </div>
+                    <div style="display: inline-block"><h3>Lucky Ether</h3></div>
                 </div>
                 <div class="col-sm-6">
                     <ul class="list-unstyled right-align">
@@ -41,7 +44,7 @@
 
             <div id="unlock-envelope" class="container-envelope">
                 <div class="container-title">
-                    <h2>Claim Red Env #<span id="claim-env-index"></span></h2>
+                    <h2>Claim from Envelope #<span id="claim-env-index"></span></h2>
                 </div>
                 <!-- Enter passcode for envelope -->  
                 <div style="display: none;" id="passcode-not-match" class="alert"></div>              

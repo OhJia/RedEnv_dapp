@@ -37472,7 +37472,7 @@ function buildClaimInfo (claim, claimer) {
   let claimAmountGwei = new __WEBPACK_IMPORTED_MODULE_5_bignumber_js___default.a(web3.fromWei(claim, 'gwei')).toFormat(2);
 
   let node = $('<div/>');
-  node.append(`<div><h2>You claimed ${claimAmountEth} ETH</h2></div>`);
+  node.append(`<div><h2><strong>You claimed ${claimAmountEth} ETH</strong></h2></div>`);
   node.append(`<div><p>(${claimAmountGwei} GWEI)</p></div>`);
   node.append(`<div><p><strong>Paid to: </strong>${claimer}</p></div>`);
   return node;
@@ -37506,15 +37506,15 @@ function buildEnvelope (env, step) {
   let initialBalanceGwei = null;
 
   if (step === 'create') {
-    titleText = `<h2>Red Env #${id} created</h2>`;
+    titleText = `<h2>Envelope #${id} created</h2>`;
   } else if (step === 'claim') {
-    titleText = `<h2>Claim Red Env #${id}</h2>`;
+    titleText = `<h2>Claim from Envelope #${id}</h2>`;
     claimButton = `<div id='claim-button'><button id='claim' class='btn btn-env' onclick='App.claim(${id})'>Claim</button></div>`
   } else if (step === 'claimed') {
-    titleText = `<h2>from Red Env #${id}</h2>`;
+    titleText = `<h2>from Envelope #${id}</h2>`;
     initialBalanceEth = new __WEBPACK_IMPORTED_MODULE_5_bignumber_js___default.a(web3.fromWei(initialBalance, 'ether')).toFormat(4);
     initialBalanceGwei = new __WEBPACK_IMPORTED_MODULE_5_bignumber_js___default.a(web3.fromWei(initialBalance, 'gwei')).toFormat(0);
-    initialBalanceText = `<p><strong>Initial balance: </strong>${initialBalanceEth} ETH (${initialBalanceGwei} GWEI)</p>`;
+    initialBalanceText = `<p><strong>Initial balance: </strong>${initialBalanceEth} Ξ (${initialBalanceGwei} GWEI)</p>`;
     totalClaimsText = `<p><strong># of claims: </strong>${totalClaims}</p>`;
   }
 
@@ -37525,9 +37525,11 @@ function buildEnvelope (env, step) {
   title.append(titleText);
 
   let envInfo = $('<div/>');
+  let epochId = Date.now();
   envInfo.addClass('envelope-info-area');
   envInfo.append(claimButton);
-  envInfo.append(`<h2>${remainingBalanceEth} ETH</h2>`);
+  envInfo.append(`<svg class="envelope-info-bg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 342 183"><defs><style>.envelope-1{fill:url(#envelope-linear-gradient-${epochId});}</style><linearGradient id="envelope-linear-gradient-${epochId}" x1="171.5" y1="10" x2="171.5" y2="176.5" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#f85947"/><stop offset="0.43" stop-color="#f65546"/><stop offset="0.81" stop-color="#f04b41"/><stop offset="1" stop-color="#eb423e"/></linearGradient></defs><path class="envelope-1" d="M334,111.58V22a12,12,0,0,0-12-12H21A12,12,0,0,0,9,22v88.08L170.5,176.5Z"/></svg>`);
+  envInfo.append(`<div class="envelope-balance-text">${remainingBalanceEth} Ξ</div>`);
   envInfo.append(`<p><strong>${remainingBalanceGwei} GWEI</strong></p>`);
 
   let envDetails = $('<div/>');
@@ -37564,7 +37566,10 @@ window.addEventListener('load', () => {
     console.warn(`Using web3 detected from external source. If you find that your accounts don't appear or you have 0 MetaCoin, ensure you've configured that source properly. If using MetaMask, see the following link. Feel free to delete this warning. :) http://truffleframework.com/tutorials/truffle-and-metamask`);
     // Use Mist/MetaMask's provider
     window.web3 = new __WEBPACK_IMPORTED_MODULE_1_web3___default.a(web3.currentProvider);
+    $('#metamask-info-area').html(buildMetamaskInfo('detected'));
   } else {
+    let node = $('<div/>');
+    $('#metamask-info-area').html(buildMetamaskInfo('undetected'));
     console.warn(`No web3 detected. Falling back to http://localhost:8545. You should remove this fallback when you deploy live, as it's inherently insecure. Consider switching to Metamask for development. More info here: http://truffleframework.com/tutorials/truffle-and-metamask`);
     // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
     window.web3 = new __WEBPACK_IMPORTED_MODULE_1_web3___default.a(new __WEBPACK_IMPORTED_MODULE_1_web3___default.a.providers.HttpProvider('http://localhost:8545'));
@@ -37572,6 +37577,49 @@ window.addEventListener('load', () => {
 
   App.start();
 });
+
+function buildMetamaskInfo (status) {
+  let node = $('<div/>');
+  node.addClass('row metamask-info-content');
+
+  if (status === 'undetected') {
+    node.append(`<div style="display: inline-block" class="metamask-title"><strong>Install Metamask to give or claim Ether</strong></div>`);
+    node.append(`<button style="display: inline-block" class="btn btn-env" id="install-metamask" onclick="window.location='./create.html';">install metamask</button>`);  
+  } else if (status === 'detected') {
+    const address = web3.eth.accounts[0];
+    let networkType = '';
+    web3.version.getNetwork((error, netId) => {
+      console.log('netId', netId);
+      if (!error) {
+        switch (netId) {
+          case '1':
+            networkType = 'main';
+            break;
+          case '2':
+            networkType = 'other';
+            break;
+          case '3':
+            networkType = 'ropsten';
+            break;
+          default:
+            console.log('cannot detect network type');
+        }
+        node.append(`<div style="display: inline-block" class="metamask-title"><strong>Metamask:</strong> ${networkType} network</div>`);
+        node.append(`<div style="display: inline-block" class="metamask-title"><strong>Address:</strong> ${address}</div>`);
+        // web3.eth.getBalance(address, (error, result) => {
+        //   if (!error) {
+        //     const balance = new BigNumber(web3.fromWei(result.toNumber(), 'ether')).toFormat(2);
+        //     console.log(balance);
+        //     node.append(`<div style="display: inline-block" class="metamask-title"><strong>Balance:</strong> ${balance} Ξ</div>`);
+        //   }
+        // });
+      }
+    });
+  }
+
+  return node;
+}
+
 
 
 /***/ }),
@@ -40754,10 +40802,10 @@ function fromByteArray (uint8) {
 
 exports = module.exports = __webpack_require__(113)(undefined);
 // imports
-exports.push([module.i, "@import url(https://fonts.googleapis.com/css?family=Space+Mono|Material+Icons);", ""]);
+exports.push([module.i, "@import url(https://fonts.googleapis.com/css?family=Roboto+Mono:400,700|Material+Icons);", ""]);
 
 // module
-exports.push([module.i, "body {\n  margin-left: 25%;\n  margin-right: 25%;\n  margin-top: 10%;\n  background-color: #F5F7FA;\n  font-family: 'Space Mono', monospace;\n}\n\ninput, textarea, select, button, a { outline: none; }\n\nbutton {\n  border: none;\n  background-color: transparent;\n}\n\nbutton:active, button:focus {\n  outline: none !important;\n  text-decoration: none;\n}\n\n.material-icons.md-dark { \n  color: #4A4A4A; \n}\n\nlabel {\n  display: inline-block;\n  color: #4A4A4A;\n  font-size: 16px;\n}\n\ninput {\n  font-size: 16px;\n  border: none;\n  padding-top: 0px;\n  padding-left: 15px; \n  color: #4A4A4A;  \n  background-color: transparent;\n}\n\n::placeholder { /* Most modern browsers support this now. */\n   color: #D8D8D8;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n    /* display: none; <- Crashes Chrome on hover */\n    -webkit-appearance: none;\n    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\nh1, h2 {\n  display: inline-block;\n  vertical-align: middle;\n  margin-top: 10px;\n  margin-bottom: 10px;\n  font-style: bold;\n}\n\nh2 {\n  color: rgb(235, 66, 62);\n  font-size: 32px;\n}\n\nh3 {\n  font-weight: normal;\n  color: rgb(235, 66, 62);\n  font-size: 18px;\n  font-style: bold;\n}\n\np {\n  color: rgb(235, 66, 62);\n  font-size: 16px;\n}\n\na {\n  color: rgb(235, 66, 62);\n  -webkit-transition-duration: 0.4s; /* Safari */\n  transition-duration: 0.4s;\n}\n\na:hover {\n  color: #4A4A4A;\n  text-decoration: none;\n}\n\n\n/***********************************\n  Header\n\n************************************/\n\n.header {\n  z-index: 100;\n  height: 8em;\n  position: fixed;\n  top: 0px;\n  left: 0px;\n  right: 0px;\n  padding: 0.5em;\n}\n\n/***********************************\n  Content\n  \n************************************/\n\n.content {\n  position: absolute;\n  left: 0px;\n  right: 0px;\n  padding: 0 50px;\n  width: 100%;\n}\n\n/*\n * Create envelope\n */\n\n#container-create {\n  text-align: center;\n  margin: auto;\n  width: 42em;\n  min-height: 350px;\n}\n\n#container-create #create-envelope {\n  background-color: #fff;\n  min-height: 300px;\n  padding: 35px 15px;\n  box-shadow: 0 20px 50px 0 rgba(0,0,0,0.12);\n  border-radius: 5px;\n}\n\n.container-title {\n  margin-bottom: 20px;\n}\n\n.container-create-field {\n  margin: 30px 40px;\n}\n\n.container-create-input {\n  background-color: #F6F6F7;\n  border-radius: 5px;\n  height: 40px;\n  padding: 8px 15px;\n}\n\n.container-input {\n  background-color: #fff;\n  border-radius: 5px;\n  height: 40px;\n  margin: 30px 0px;\n  padding: 8px 5px;\n}\n\n.container-input input {\n  width: 100%;\n}\n\n.container-button {\n  margin: 30px auto;\n}\n\n.label-sub {\n  font-size: 12px;\n  color: #9B9B9B;\n}\n\n/*\n * Envelope info\n */\n\n.container-envelope {\n  text-align: center;\n  margin: auto;\n  width: 40em;\n  min-height: 50px;\n}\n\n#envelope-link {\n  margin-bottom: 2em;\n}\n\n.envelope-info-area {\n  background-color: #F85947;\n  min-height: 16em;\n  padding: 85px 15px 35px 15px;\n  box-shadow: 0 20px 50px 0 rgba(0,0,0,0.12);\n  border-radius: 5px;\n  width: 15em;\n  margin: 0 auto;\n}\n\n.envelope-info-area h2, .envelope-info-area p {\n  color: #fff;\n}\n\n.envelope-detail-area {\n  margin: 2em 5em;\n}\n\n.envelope-detail-area p {\n  color: rgb(235, 66, 62);\n  font-size: 14px;\n}\n\n.claim-sub-area {\n  margin: 6em 5em;\n}\n\n\n/*\n * Social links\n */\n\n.container-social {\n  margin: 0 auto;\n  width: 50%;\n  text-align: center;\n}\n\n\n/***********************************\n  General\n  \n************************************/\n\n.list-unstyled {\n  list-style: none;\n}\n\n.list-unstyled li {\n  display: inline-block;\n  padding-left: 15px;\n}\n\n.right-align {\n  text-align: right;\n  padding-right: 0;\n}\n\n.left-align {\n  text-align: left;\n  padding-left: 0;\n}\n\n.btn {\n  padding: 10px 60px;\n  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.1);\n  -webkit-transition-duration: 0.4s; /* Safari */\n  transition-duration: 0.4s;\n}\n\n.btn:hover {\n  color: #fff; \n  background-color: #B5061C;\n}\n\n.btn:select, .btn:active, .btn:selected, .btn:focus {\n  outline: none;\n}\n\n.btn-env {\n  background-color: rgb(235, 66, 62);\n  color: #fff;\n  font-size: 12px;\n  text-transform: uppercase;\n  border: none;\n  border-radius: 5px;\n}\n\n\n", ""]);
+exports.push([module.i, "/*@import url('https://fonts.googleapis.com/css?family=Space+Mono|Material+Icons');\n*/\n\nbody {\n  margin-left: 25%;\n  margin-right: 25%;\n  margin-top: 10%;\n  background-color: #F5F7FA;\n  font-family: 'Roboto Mono', monospace;\n}\n\ninput, textarea, select, button, a { outline: none; }\n\nbutton {\n  border: none;\n  background-color: transparent;\n}\n\nbutton:active, button:focus {\n  outline: none !important;\n  text-decoration: none;\n}\n\n.material-icons.md-dark { \n  color: #4A4A4A; \n}\n\nlabel {\n  display: inline-block;\n  color: #4A4A4A;\n  font-size: 16px;\n  font-weight: 400;\n}\n\ninput {\n  font-size: 16px;\n  border: none;\n  padding-top: 0px;\n  padding-left: 15px; \n  color: #4A4A4A;  \n  background-color: transparent;\n}\n\n::placeholder { /* Most modern browsers support this now. */\n   color: #D8D8D8;\n}\n\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n    /* display: none; <- Crashes Chrome on hover */\n    -webkit-appearance: none;\n    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */\n}\n\nh1, h2 {\n  display: inline-block;\n  vertical-align: middle;\n  margin-top: 10px;\n  margin-bottom: 10px;\n  font-style: bold;\n}\n\nh2 {\n  color: rgb(235, 66, 62);\n  font-size: 32px;\n}\n\nh3 {\n  font-weight: normal;\n  color: rgb(235, 66, 62);\n  font-size: 18px;\n  font-style: bold;\n}\n\np {\n  color: rgb(235, 66, 62);\n  font-size: 16px;\n}\n\na {\n  color: rgb(235, 66, 62);\n  -webkit-transition-duration: 0.4s; /* Safari */\n  transition-duration: 0.4s;\n}\n\na:hover {\n  color: #4A4A4A;\n  text-decoration: none;\n}\n\n\n#metamask-info-area{\n  z-index: 10;\n  height: 5em;\n  /*background-color: #fff;*/\n  /*background-color: rgb(235, 66, 62);*/\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  padding: 1.5em;\n  box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.1);\n}\n\n.metamask-info-content {\n  margin: 0px auto;\n  text-align: center;\n}\n\n.metamask-title {\n  font-size: 14px;\n  /*color: #F85947;*/\n  color: #4A4A4A;\n  margin-right: 15px;\n}\n\n#install-metamask {\n  background-color: #B5061C;\n  color: #fff;\n}\n\n/***********************************\n  Header\n\n************************************/\n\n.header {\n  z-index: 1;\n  height: 8em;\n  /*position: fixed;*/\n  top: 4em;\n  left: 0px;\n  right: 0px;\n  padding: 0.5em;\n}\n\n.coin-icon {\n  height: 35px;\n  margin-bottom: -11px;\n}\n\n/***********************************\n  Content\n  \n************************************/\n\n.content {\n  position: absolute;\n  left: 0px;\n  right: 0px;\n  padding: 0 50px;\n  width: 100%;\n}\n\n/*\n * Create envelope\n */\n\n#container-create {\n  text-align: center;\n  margin: auto;\n  width: 42em;\n  min-height: 350px;\n}\n\n#container-create #create-envelope {\n  background-color: #fff;\n  min-height: 300px;\n  padding: 35px 15px;\n  box-shadow: 0 20px 50px 0 rgba(0,0,0,0.12);\n  border-radius: 5px;\n}\n\n.container-title {\n  margin-bottom: 20px;\n}\n\n.container-create-field {\n  margin: 30px 40px;\n}\n\n.container-create-input {\n  background-color: #F6F6F7;\n  border-radius: 5px;\n  height: 40px;\n  padding: 8px 15px;\n}\n\n.container-input {\n  background-color: #fff;\n  border-radius: 5px;\n  height: 40px;\n  margin: 30px 0px;\n  padding: 8px 5px;\n}\n\n.container-input input {\n  width: 100%;\n}\n\n.container-button {\n  margin: 30px auto;\n}\n\n.label-sub {\n  font-size: 12px;\n  color: #9B9B9B;\n}\n\n/*\n * Envelope info\n */\n\n.container-envelope {\n  text-align: center;\n  margin: auto;\n  width: 40em;\n  min-height: 50px;\n}\n\n#envelope-link {\n  margin-bottom: 2em;\n}\n\n.envelope-info-area {\n  background-color: #F85947;\n  min-height: 16em;\n  padding: 2px 2px 35px 2px;\n  box-shadow: 0 20px 50px 0 rgba(0,0,0,0.12);\n  border-radius: 5px;\n  width: 15em;\n  margin: 0 auto;\n}\n\n.envelope-info-area h2, .envelope-info-area p {\n  color: #fff;\n}\n\n.envelope-balance-text {\n  font-size: 28px;\n  color: #fff;\n}\n\n#envelope-bg {\n  width: 100%;\n}\n\n.envelope-detail-area {\n  margin: 2em 5em;\n}\n\n.envelope-detail-area p {\n  color: rgb(235, 66, 62);\n  font-size: 14px;\n}\n\n#claim-button {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 7em;\n}\n\n#claim {\n  background-color: rgba(255, 255, 255, 0.65);\n  -webkit-transition-duration: 0.4s; /* Safari */\n  transition-duration: 0.4s;\n  color: rgb(235, 66, 62);\n}\n\n#claim:hover {\n  color: #fff; \n  background-color: #B5061C;\n}\n\n#claim:select, #claim:active, #claim:selected, #claim:focus {\n  outline: none;\n}\n\n.claim-sub-area {\n  margin: 6em 5em;\n}\n\n\n/*\n * Social links\n */\n\n.container-social {\n  margin: 0 auto;\n  width: 50%;\n  text-align: center;\n}\n\n\n/***********************************\n  General\n  \n************************************/\n\n.list-unstyled {\n  list-style: none;\n}\n\n.list-unstyled li {\n  display: inline-block;\n  padding-left: 15px;\n  padding-top: 4px;\n}\n\n.right-align {\n  text-align: right;\n  padding-right: 0;\n}\n\n.left-align {\n  text-align: left;\n  padding-left: 0;\n}\n\n.btn {\n  padding: 10px 60px;\n  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.1);\n  -webkit-transition-duration: 0.4s; /* Safari */\n  transition-duration: 0.4s;\n}\n\n.btn:hover {\n  color: #fff; \n  background-color: #B5061C;\n}\n\n.btn:select, .btn:active, .btn:selected, .btn:focus {\n  outline: none;\n}\n\n.btn-env {\n  background-color: rgb(235, 66, 62);\n  color: #fff;\n  font-size: 12px;\n  text-transform: uppercase;\n  border: none;\n  border-radius: 5px;\n}\n\n\n", ""]);
 
 // exports
 
