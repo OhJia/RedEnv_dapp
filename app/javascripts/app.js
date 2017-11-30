@@ -176,7 +176,9 @@ function renderEnvelopeLink () {
   RedEnvelope.deployed().then((i) => {
     i.envelopeIndex.call().then((index) => {
       console.log('index is at: ', index);
-      const link = `/claim.html?env-id=${index}`;
+      const urlPath = window.location.href.split('/').slice(0, -1).join('/');
+      console.log("urlPath: ", urlPath);
+      const link = `${urlPath}/claim.html?env-id=${index}`;
       $('#envelope-link').append(buildEnvelopeLink(link));
       renderEnvelopeCreated(index);
     });
@@ -247,7 +249,7 @@ function buildClaimInfo (claim, claimer) {
   let claimAmountGwei = new BigNumber(web3.fromWei(claim, 'gwei')).toFormat(2);
 
   let node = $('<div/>');
-  node.append(`<div><h2>You claimed ${claimAmountEth} ETH</h2></div>`);
+  node.append(`<div><h2><strong>You claimed ${claimAmountEth} ETH</strong></h2></div>`);
   node.append(`<div><p>(${claimAmountGwei} GWEI)</p></div>`);
   node.append(`<div><p><strong>Paid to: </strong>${claimer}</p></div>`);
   return node;
@@ -281,15 +283,15 @@ function buildEnvelope (env, step) {
   let initialBalanceGwei = null;
 
   if (step === 'create') {
-    titleText = `<h2>Red Env #${id} created</h2>`;
+    titleText = `<h2>Envelope #${id} created</h2>`;
   } else if (step === 'claim') {
-    titleText = `<h2>Claim Red Env #${id}</h2>`;
+    titleText = `<h2>Claim from Envelope #${id}</h2>`;
     claimButton = `<div id='claim-button'><button id='claim' class='btn btn-env' onclick='App.claim(${id})'>Claim</button></div>`
   } else if (step === 'claimed') {
-    titleText = `<h2>from Red Env #${id}</h2>`;
+    titleText = `<h2>from Envelope #${id}</h2>`;
     initialBalanceEth = new BigNumber(web3.fromWei(initialBalance, 'ether')).toFormat(4);
     initialBalanceGwei = new BigNumber(web3.fromWei(initialBalance, 'gwei')).toFormat(0);
-    initialBalanceText = `<p><strong>Initial balance: </strong>${initialBalanceEth} ETH (${initialBalanceGwei} GWEI)</p>`;
+    initialBalanceText = `<p><strong>Initial balance: </strong>${initialBalanceEth} Ξ (${initialBalanceGwei} GWEI)</p>`;
     totalClaimsText = `<p><strong># of claims: </strong>${totalClaims}</p>`;
   }
 
@@ -300,9 +302,11 @@ function buildEnvelope (env, step) {
   title.append(titleText);
 
   let envInfo = $('<div/>');
+  let epochId = Date.now();
   envInfo.addClass('envelope-info-area');
   envInfo.append(claimButton);
-  envInfo.append(`<h2>${remainingBalanceEth} ETH</h2>`);
+  envInfo.append(`<svg class="envelope-info-bg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 342 183"><defs><style>.envelope-1{fill:url(#envelope-linear-gradient-${epochId});}</style><linearGradient id="envelope-linear-gradient-${epochId}" x1="171.5" y1="10" x2="171.5" y2="176.5" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#f85947"/><stop offset="0.43" stop-color="#f65546"/><stop offset="0.81" stop-color="#f04b41"/><stop offset="1" stop-color="#eb423e"/></linearGradient></defs><path class="envelope-1" d="M334,111.58V22a12,12,0,0,0-12-12H21A12,12,0,0,0,9,22v88.08L170.5,176.5Z"/></svg>`);
+  envInfo.append(`<div class="envelope-balance-text">${remainingBalanceEth} Ξ</div>`);
   envInfo.append(`<p><strong>${remainingBalanceGwei} GWEI</strong></p>`);
 
   let envDetails = $('<div/>');
@@ -339,7 +343,10 @@ window.addEventListener('load', () => {
     console.warn(`Using web3 detected from external source. If you find that your accounts don't appear or you have 0 MetaCoin, ensure you've configured that source properly. If using MetaMask, see the following link. Feel free to delete this warning. :) http://truffleframework.com/tutorials/truffle-and-metamask`);
     // Use Mist/MetaMask's provider
     window.web3 = new Web3(web3.currentProvider);
+    $('#metamask-info-area').html(buildMetamaskInfo('detected'));
   } else {
+    let node = $('<div/>');
+    $('#metamask-info-area').html(buildMetamaskInfo('undetected'));
     console.warn(`No web3 detected. Falling back to http://localhost:8545. You should remove this fallback when you deploy live, as it's inherently insecure. Consider switching to Metamask for development. More info here: http://truffleframework.com/tutorials/truffle-and-metamask`);
     // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
     window.web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
@@ -347,3 +354,46 @@ window.addEventListener('load', () => {
 
   App.start();
 });
+
+function buildMetamaskInfo (status) {
+  let node = $('<div/>');
+  node.addClass('row metamask-info-content');
+
+  if (status === 'undetected') {
+    node.append(`<div style="display: inline-block" class="metamask-title"><strong>Install Metamask to give or claim Ether</strong></div>`);
+    node.append(`<button style="display: inline-block" class="btn btn-env" id="install-metamask" onclick="window.location='./create.html';">install metamask</button>`);  
+  } else if (status === 'detected') {
+    const address = web3.eth.accounts[0];
+    let networkType = '';
+    web3.version.getNetwork((error, netId) => {
+      console.log('netId', netId);
+      if (!error) {
+        switch (netId) {
+          case '1':
+            networkType = 'main';
+            break;
+          case '2':
+            networkType = 'other';
+            break;
+          case '3':
+            networkType = 'ropsten';
+            break;
+          default:
+            console.log('cannot detect network type');
+        }
+        node.append(`<div style="display: inline-block" class="metamask-title"><strong>Metamask:</strong> ${networkType} network</div>`);
+        node.append(`<div style="display: inline-block" class="metamask-title"><strong>Address:</strong> ${address}</div>`);
+        // web3.eth.getBalance(address, (error, result) => {
+        //   if (!error) {
+        //     const balance = new BigNumber(web3.fromWei(result.toNumber(), 'ether')).toFormat(2);
+        //     console.log(balance);
+        //     node.append(`<div style="display: inline-block" class="metamask-title"><strong>Balance:</strong> ${balance} Ξ</div>`);
+        //   }
+        // });
+      }
+    });
+  }
+
+  return node;
+}
+
