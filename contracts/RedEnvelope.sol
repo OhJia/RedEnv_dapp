@@ -112,8 +112,12 @@ contract RedEnvelope {
 	// Helper
 
 	function generateClaimAmount(uint _remainingBalance) private constant returns (uint) {
+
+		if (_remainingBalance < 420000000000000) {
+			return _remainingBalance;
+		} 
 		
-		uint amount = uint(sha3(block.timestamp))%(_remainingBalance-50)+50;
+		uint amount = uint(sha3(block.timestamp))%(_remainingBalance-420000000000000)+420000000000000;
 
 		require (amount > 0);
 		require (amount <= _remainingBalance);

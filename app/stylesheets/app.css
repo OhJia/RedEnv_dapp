@@ -94,7 +94,7 @@ a:hover {
 #metamask-info-area{
   z-index: 10;
   height: 5em;
-  /*background-color: #fff;*/
+  background-color: #F5F7FA;
   /*background-color: rgb(235, 66, 62);*/
   position: fixed;
   top: 0;
@@ -264,15 +264,17 @@ a:hover {
 }
 
 #claim {
-  background-color: rgba(255, 255, 255, 0.65);
+  background-color: #B5061C;
+  /*background-color: rgba(255, 255, 255, 0.65);*/
   -webkit-transition-duration: 0.4s; /* Safari */
   transition-duration: 0.4s;
-  color: rgb(235, 66, 62);
+  /*color: rgb(235, 66, 62);*/
+  color: #fff;
 }
 
 #claim:hover {
-  color: #fff; 
-  background-color: #B5061C;
+  color: rgb(235, 66, 62); 
+  background-color: rgba(255, 255, 255, 0.65);
 }
 
 #claim:select, #claim:active, #claim:selected, #claim:focus {

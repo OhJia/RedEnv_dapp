@@ -360,8 +360,9 @@ function buildMetamaskInfo (status) {
   node.addClass('row metamask-info-content');
 
   if (status === 'undetected') {
+    const metamaskLink = `https://metamask.io/`;
     node.append(`<div style="display: inline-block" class="metamask-title"><strong>Install Metamask to give or claim Ether</strong></div>`);
-    node.append(`<button style="display: inline-block" class="btn btn-env" id="install-metamask" onclick="window.location='./create.html';">install metamask</button>`);  
+    node.append(`<button style="display: inline-block" class="btn btn-env" id="install-metamask" onclick="window.location='${metamaskLink}';">install metamask</button>`);  
   } else if (status === 'detected') {
     const address = web3.eth.accounts[0];
     let networkType = '';
