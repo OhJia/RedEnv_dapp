@@ -12,8 +12,8 @@
       "name": "upgrade",
       "outputs": [],
       "payable": false,
-      "type": "function",
-      "stateMutability": "nonpayable"
+      "stateMutability": "nonpayable",
+      "type": "function"
     },
     {
       "constant": true,
@@ -26,8 +26,8 @@
         }
       ],
       "payable": false,
-      "type": "function",
-      "stateMutability": "view"
+      "stateMutability": "view",
+      "type": "function"
     },
     {
       "constant": true,
@@ -40,8 +40,8 @@
         }
       ],
       "payable": false,
-      "type": "function",
-      "stateMutability": "view"
+      "stateMutability": "view",
+      "type": "function"
     },
     {
       "constant": false,
@@ -54,14 +54,14 @@
       "name": "setCompleted",
       "outputs": [],
       "payable": false,
-      "type": "function",
-      "stateMutability": "nonpayable"
+      "stateMutability": "nonpayable",
+      "type": "function"
     },
     {
       "inputs": [],
       "payable": false,
-      "type": "constructor",
-      "stateMutability": "nonpayable"
+      "stateMutability": "nonpayable",
+      "type": "constructor"
     }
   ],
   "bytecode": "0x6060604052341561000f57600080fd5b336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506102db8061005e6000396000f300606060405260043610610062576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680630900f01014610067578063445df0ac146100a05780638da5cb5b146100c9578063fdacd5761461011e575b600080fd5b341561007257600080fd5b61009e600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610141565b005b34156100ab57600080fd5b6100b3610224565b6040518082815260200191505060405180910390f35b34156100d457600080fd5b6100dc61022a565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b341561012957600080fd5b61013f600480803590602001909190505061024f565b005b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161415610220578190508073ffffffffffffffffffffffffffffffffffffffff1663fdacd5766001546040518263ffffffff167c010000000000000000000000000000000000000000000000000000000002815260040180828152602001915050600060405180830381600087803b151561020b57600080fd5b6102c65a03f1151561021c57600080fd5b5050505b5050565b60015481565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614156102ac57806001819055505b505600a165627a7a7230582053e79f2d94305b9547b3bba46e7f1b4b9c59595493ee02f57ff43f9df2d220490029",
@@ -220,7 +220,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 428,
+                                  "referencedDeclaration": 435,
                                   "type": "msg",
                                   "value": "msg"
                                 },
@@ -357,7 +357,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 428,
+                                  "referencedDeclaration": 435,
                                   "type": "msg",
                                   "value": "msg"
                                 },
@@ -816,60 +816,12 @@
     "version": "0.4.18+commit.9cf6e910.Emscripten.clang"
   },
   "networks": {
-    "1510092592653": {
+    "3": {
       "events": {},
       "links": {},
-      "address": "0x21bf78933ca83489a2cd41662e8b9fe9ef9ea225",
-      "updated_at": 1510093274223
-    },
-    "1510097993513": {
-      "events": {},
-      "links": {},
-      "address": "0xcd03c5c490b2cd051c89683d342690a89202ad6a",
-      "updated_at": 1510103726424
-    },
-    "1510159086656": {
-      "events": {},
-      "links": {},
-      "address": "0xd24a20b1bdc9238a64129e715ee27c6f2b2dc6c7",
-      "updated_at": 1510162351492
-    },
-    "1510330770115": {
-      "events": {},
-      "links": {},
-      "address": "0x2b228808ca5c43f6c67cd46e72c451b42e0d7bc3",
-      "updated_at": 1510330861885
-    },
-    "1510355989256": {
-      "events": {},
-      "links": {},
-      "address": "0x271c9ecd43213161fc906450d5ed445f1cd0393e",
-      "updated_at": 1510356000715
-    },
-    "1510374965150": {
-      "events": {},
-      "links": {},
-      "address": "0x8e2c8fbfd8ecf4c3cbdd1f9c7fb829c693730d07",
-      "updated_at": 1510384079120
-    },
-    "1511368130627": {
-      "events": {},
-      "links": {},
-      "address": "0xb84ad5196a05da03a7936d9c2558f55a477fac64",
-      "updated_at": 1511368207210
-    },
-    "1511369162243": {
-      "events": {},
-      "links": {},
-      "address": "0xca4adfeda66ee99cd5aa88941fde99bdce46f0ad",
-      "updated_at": 1511550519491
-    },
-    "1511881920656": {
-      "events": {},
-      "links": {},
-      "address": "0xbc92faddce1fbeb3c9bb6ef21d1d4c046c91448d"
+      "address": "0xc3d745ef330a7bfa8a2817b90b99027de611605e"
     }
   },
   "schemaVersion": "1.0.1",
-  "updatedAt": "2017-11-28T15:12:12.927Z"
+  "updatedAt": "2017-12-01T18:38:56.130Z"
 }
