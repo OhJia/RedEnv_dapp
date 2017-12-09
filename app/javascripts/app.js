@@ -98,10 +98,6 @@ window.App = {
     });
   },
 
-  checkTransactionStatus: () => {
-
-  },
-
   /*
   * Check that envelope exists,
   * check passcode,
@@ -212,7 +208,7 @@ function buildEnvelopeLink (link) {
   linkField.append(node1);
   linkField.append(node2);
 
-  const labelText = 'Send the link to as many people you want to give lucky Ether to. They will need the passcode to claim it.'
+  const labelText = 'Send this link to your recipients. They will also need the passcode to claim!'
   let node3 = $('<div/>');
   node3.append(`<p class='label-sub'>${labelText}</p>`);
 
@@ -406,13 +402,6 @@ function buildMetamaskInfo (status) {
         }
         node.append(`<div style="display: inline-block" class="metamask-title"><strong>Metamask:</strong> ${networkType} network</div>`);
         node.append(`<div style="display: inline-block" class="metamask-title"><strong>Address:</strong> ${address}</div>`);
-        // web3.eth.getBalance(address, (error, result) => {
-        //   if (!error) {
-        //     const balance = new BigNumber(web3.fromWei(result.toNumber(), 'ether')).toFormat(2);
-        //     console.log(balance);
-        //     node.append(`<div style="display: inline-block" class="metamask-title"><strong>Balance:</strong> ${balance} Ξ</div>`);
-        //   }
-        // });
       }
     });
   }
