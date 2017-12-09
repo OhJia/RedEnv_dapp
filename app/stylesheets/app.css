@@ -64,7 +64,7 @@ h1, h2 {
 
 h2 {
   color: rgb(235, 66, 62);
-  font-size: 32px;
+  font-size: 34px;
 }
 
 h3 {
@@ -76,7 +76,7 @@ h3 {
 
 p {
   color: rgb(235, 66, 62);
-  font-size: 16px;
+  font-size: 15px;
 }
 
 a {
@@ -102,6 +102,11 @@ a:hover {
   right: 0;
   padding: 1.5em;
   box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.1);
+}
+@media (max-width: 768px) {
+  #metamask-info-area {
+    display: none;
+  } 
 }
 
 .metamask-info-content {
@@ -133,7 +138,12 @@ a:hover {
   top: 0em;
   left: 0px;
   right: 0px;
-  padding: 0.5em;
+  padding: 2em 0.5em 0.5em 0.5em;
+}
+@media (max-width: 768px) {
+  .header {
+    padding-top: 0;
+  } 
 }
 
 .coin-icon {
@@ -147,12 +157,34 @@ a:hover {
 ************************************/
 
 .content {
-  position: absolute;
-  left: 0px;
-  right: 0px;
   padding: 0 50px;
   width: 100%;
 }
+@media (max-width: 768px) {
+  .content {
+    padding: 0;
+  }
+}
+
+/*
+ * Home 
+ */
+
+#envelope-home {
+  width: 16em;
+}
+
+.faq-area {
+  margin: 3em auto;
+  text-align: left;
+  width: 40em;
+}
+@media (max-width: 768px) {
+  .faq-area {
+    width: 100%;
+  }
+}
+
 
 /*
  * Create envelope
@@ -209,6 +241,22 @@ a:hover {
   color: #9B9B9B;
 }
 
+
+/*
+ * Mobile content
+ */
+
+#content-mobile {
+  margin: -10px 0 15px 0;
+  padding: 0 0 10px 0;
+}
+#content-mobile .container-title h2 {
+  text-align: center;
+  font-size: 26px;
+  line-height: 1.2em;
+}
+
+
 /*
  * Envelope info
  */
@@ -219,12 +267,23 @@ a:hover {
   width: 40em;
   min-height: 50px;
 }
+@media (max-width: 768px) {
+  .container-envelope {
+    width: 100%;
+    padding-bottom:12px;
+  }
+  .container-envelope .btn-create,
+  .container-envelope h3 {
+    display: none;
+  }
+}
 
 #envelope-link {
   margin-bottom: 2em;
 }
 
 .envelope-info-area {
+  position: relative;
   background-color: #F85947;
   min-height: 16em;
   padding: 2px 2px 35px 2px;
@@ -260,7 +319,7 @@ a:hover {
   position: absolute;
   left: 0;
   right: 0;
-  top: 7em;
+  top: 1.5em;
 }
 
 #claim {
@@ -285,6 +344,10 @@ a:hover {
   margin: 6em 5em;
 }
 
+#pending-notification p{
+  font-size: 12px;
+}
+
 
 /*
  * Social links
@@ -294,6 +357,11 @@ a:hover {
   margin: 0 auto;
   width: 50%;
   text-align: center;
+}
+@media (max-width: 768px) {
+  .container-social {
+    width: 100%;
+  }
 }
 
 
@@ -347,4 +415,14 @@ a:hover {
   border-radius: 5px;
 }
 
+.btn-home {
+  background-color: rgb(235, 66, 62);
+  color: #fff;
+  font-size: 16px;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 5px;
+  padding: 20px 80px;
+  margin: 2em 0 7em 0;
+}
 

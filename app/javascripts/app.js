@@ -3,6 +3,7 @@
 import '../stylesheets/app.css';
 
 import { default as Web3 } from 'web3';
+import { selectContractInstance } from 'web3';
 import { default as contract } from 'truffle-contract';
 
 // Import contract artifacts and turn them into usable abstractions.
@@ -82,16 +83,23 @@ window.App = {
     const amountToBuy = params.amount;
     const amountInWei = web3.toWei(amountToBuy, 'gwei');
     const passcode = params.passcode.toString();
-
     RedEnvelope.deployed().then((i) => {
+      $('#pending-notification').show();
+      $('#pending-notification').html(`<p>Please select SUBMIT in MetaMask Notification </p><p>and wait for transaction to verify...</p>`);
       i.buyEnvelope(passcode, { from: web3.eth.accounts[0], value: amountInWei }).then((f) => {
+        console.log(f);
         $('#container-create').hide();
+        $('#pending-notification').hide();
         renderEnvelopeLink();
       }).catch((e) => {
         console.log(e);
         this.setStatus('Error buying envelope; see log.');
       });
     });
+  },
+
+  checkTransactionStatus: () => {
+
   },
 
   /*
@@ -146,6 +154,8 @@ window.App = {
 
   claim: (index) => {
     let claimIndex = index;
+    $('#pending-notification').show();
+    $('#pending-notification').html(`<p>Please select SUBMIT in MetaMask Notification </p><p>and wait for transaction to verify...</p>`);
     RedEnvelope.deployed().then((i) => {
       return i.claim(App.getPasscode(), claimIndex, { from: web3.eth.accounts[0] })
     }).then((result) => {
@@ -156,6 +166,7 @@ window.App = {
           console.log('Claimed event found! ', parseInt(log.args._id), parseInt(log.args._value));
           $('#envelope-to-claim').hide();
           $('#claimed-envelope').hide();
+          $('#pending-notification').hide();
           renderClaimedEnvelope(parseInt(log.args._id));
           $('#claim-info').show();
           $('#claim-info').html(buildClaimInfo(parseInt(log.args._value), web3.eth.accounts[0]));
@@ -279,6 +290,7 @@ function buildEnvelope (env, step) {
   let claimButton = '';
   let initialBalanceText = '';
   let totalClaimsText = '';
+  let pendingNotification = '';
   let initialBalanceEth = null;
   let initialBalanceGwei = null;
 
@@ -286,7 +298,8 @@ function buildEnvelope (env, step) {
     titleText = `<h2>Envelope #${id} created</h2>`;
   } else if (step === 'claim') {
     titleText = `<h2>Claim from Envelope #${id}</h2>`;
-    claimButton = `<div id='claim-button'><button id='claim' class='btn btn-env' onclick='App.claim(${id})'>Claim</button></div>`
+    claimButton = `<div id='claim-button'><button id='claim' class='btn btn-env' onclick='App.claim(${id})'>Claim</button></div>`;
+    pendingNotification = `<div style="display: none;" id="pending-notification" class="alert"></div>`;
   } else if (step === 'claimed') {
     titleText = `<h2>from Envelope #${id}</h2>`;
     initialBalanceEth = new BigNumber(web3.fromWei(initialBalance, 'ether')).toFormat(4);
@@ -299,6 +312,7 @@ function buildEnvelope (env, step) {
 
   let title = $('<div/>');
   title.addClass('container-title');
+  title.append(pendingNotification);
   title.append(titleText);
 
   let envInfo = $('<div/>');
@@ -338,6 +352,14 @@ window.copyToClipboard = (element) => {
   ON LOAD
 ****************************************************/
 window.addEventListener('load', () => {
+
+  // Check if on mobile
+  if (navigator.userAgent.match(/mobile/i)) {
+    $('#content-area').hide();
+    $('#content-mobile').show();
+    return false;
+  }
+
   // Checking if Web3 has been injected by the browser (Mist/MetaMask)
   if (typeof web3 !== 'undefined') {
     console.warn(`Using web3 detected from external source. If you find that your accounts don't appear or you have 0 MetaCoin, ensure you've configured that source properly. If using MetaMask, see the following link. Feel free to delete this warning. :) http://truffleframework.com/tutorials/truffle-and-metamask`);

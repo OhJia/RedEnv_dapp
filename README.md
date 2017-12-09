@@ -1,4 +1,6 @@
-# Lucky Ether Dapp
+# Lucky Envelope Dapp
+
+Try it at [luckyenvelope.money](https://luckyenvelope.money)
 
 RedEnvelope.sol deployed to [Ropsten Testnet](https://ropsten.etherscan.io/address/0x1cbd18a4d96f589616f57ae1562fb83c20992a76): 0x1cbd18a4d96f589616f57ae1562fb83c20992a76
 
