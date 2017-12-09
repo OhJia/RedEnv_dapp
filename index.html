@@ -2,31 +2,80 @@
 <html>
   <head>
     <title>Red Envelope - Spread decentralized fortune</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
     <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
     <script src="app.js"></script>
   </head>
   <body class="container">
-    <h1>Red Envelope ETH</h1>
-    
-    <div class="table-responsive">
-      <h2>How does this work?</h2>
-
-      <br><span class="hint"><strong>Hint:</strong> open the browser developer console to view any errors and warnings.</span>
-
-      <br><br>
-
-      <input type="submit" value="Create an envelope" 
-      onclick="window.location='./create.html';" /> 
-
-
-      <br><br>
-      <h2>Claim an envelope</h2>
-      
-      <br>
-      
-      <br>
+    <div id="metamask-info-area"></div>
+    <div class="container header">
+      <div class="row">
+        <div class="col-sm-6 col-xs-12 row">
+          <a href="./">
+            <div style="display: inline-block">
+                <svg class="coin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 342 388"><defs><style>.header-1{fill:#fbb03b;}.header-2{fill:#fff;}</style></defs><circle class="header-1" cx="171" cy="199" r="155"/><rect class="header-2" x="136" y="141.11" width="72" height="22.71"/><rect class="header-2" x="136" y="188.64" width="72" height="22.71"/><rect class="header-2" x="136" y="236.17" width="72" height="22.71"/></svg>
+              </div>
+              <div style="display: inline-block"><h3>Lucky Envelope</a></div>
+            </a>
+          </div>
+          <div class="col-xs-6 hidden-xs">
+            <ul class="list-unstyled right-align">
+                <li><h3><a href="./create.html">Create</a></h3></li>
+                <li><h3><a href="./claim.html">Claim</a></h3></li>
+                <!-- <li><p><a href="/">ENG</a></p></li>
+                <li><p><a href="/">中文</a></p></li> -->
+            </ul>
+          </div>
+        </div>
     </div>
+    
+    <div style="display: none;" id="content-mobile">
+      <div class="container-title">
+          <h2>Please download <a href="https://metamask.io" style="text-decoration: underline;">MetaMask</a> and use Lucky Envelope in your Chrome browser.</h2>
+      </div>
+    </div>
+    <div class="container content">
+      <div class="container-envelope">
+        <div class="container-title">
+          <svg id="envelope-home" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 300 300"><defs><style>.cls-1{fill:#f85947;}.cls-2{fill:url(#linear-gradient);}.cls-3{fill:#fbb03b;}</style><linearGradient id="linear-gradient" x1="72.26" y1="72.8" x2="72.26" y2="168.6" gradientTransform="translate(-29.32 75.52) rotate(-45)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#f85947"/><stop offset="0.34" stop-color="#f45645"/><stop offset="0.64" stop-color="#ea4e41"/><stop offset="0.92" stop-color="#d84039"/><stop offset="1" stop-color="#d13b36"/></linearGradient></defs><title>envelope-s</title><rect class="cls-1" x="54" y="44" width="187" height="212.32" rx="6.9" ry="6.9" transform="translate(-62.98 148.28) rotate(-45)"/><path class="cls-2" d="M180.69,51.12,144.25,14.67a6.92,6.92,0,0,0-9.76,0L12,137.14a6.92,6.92,0,0,0,0,9.76l35.84,35.84,92.73-38.69Z"/><circle class="cls-3" cx="140.5" cy="143.5" r="26.5"/></svg>
+          <h2><strong>Spread the Good Fortune</strong></h2>
+          <p>Send and receive red envelopes in Ether ='.'=</p>
+        </div>        
+        <button class="btn btn-home btn-create" onclick="window.location='./create.html';">create an envelope</button>
+        <h3 class="divider">/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\</h3>
+      </div>
+      <div class="faq-area">
+        
+        <h3><strong>What is a red envelope?</strong></h3>
+        <p>
+          It's East Asian tradition of gifting envelopes containing money to family and friends for celebrations. The color red symbolizes good luck, so sending money wrapped in red is a way to bestow good fortune to the receiver.
+        </p>
+        <br>
+
+        <h3><strong>How does Lucky Envelope work?</strong></h3>
+        <p>
+          <strong>Create and send an envelope:</strong> Go to <a href="./create.html" style="text-decoration: underline">Create</a> and set the amount of Ether and set a passcode. Then send the URL and passcode of this envelope to everyone you want to gift. 
+        </p>
+        <br>
+        <p>
+          <strong>Claim an envelope:</strong> Go to the URL you received and enter the passcode. Tap "claim" to receive a portion of the original deposit.
+        </p>
+        <br>
+
+        <h3><strong>What is Ether?</strong></h3>
+        <p>Ether is a cryptocurrency that powers the Ethereum blockchain...</p>
+        <br>
+      </div>
+    </div>
+    <div class="container-social">
+      <ul class="list-unstyled">
+          <li><h3><a href="https://twitter.com/OhJia">Twitter</a></h3></li>
+          <li><h3><a href="">Medium</a></h3></li>
+          <li><h3><a href="https://github.com/OhJia/RedEnv_dapp">Github</a></h3></li>
+      </ul>
+    </div>
+    
   </body>
 </html>
