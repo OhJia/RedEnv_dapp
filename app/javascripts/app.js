@@ -3,7 +3,6 @@
 import '../stylesheets/app.css';
 
 import { default as Web3 } from 'web3';
-import { selectContractInstance } from 'web3';
 import { default as contract } from 'truffle-contract';
 
 // Import contract artifacts and turn them into usable abstractions.
@@ -243,7 +242,7 @@ function buildErrorMessage () {
   node.addClass('container-title');
   node.append(`<h2>Uh oh. This envelope does not exist.</h2>`);
   node.append(`<p>Check your URL and paste it into the search bar.</p>`);
-  node.append(`<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1476 399"><defs><style>.cls-1{fill:#d8d8d8;}.cls-2{fill:#e1e7ec;}.cls-3{fill:#eb423e;}.cls-4{fill:#fbb03b;}.cls-5{fill:#7ac943;}.cls-6{fill:#fff;}.cls-7{fill:none;stroke:#eb423e;stroke-miterlimit:10;stroke-width:5px;}</style></defs><title>sb</title><rect class="cls-1" x="18" y="15" width="1438" height="159" rx="12" ry="12"/><rect class="cls-2" x="18" y="105" width="1437" height="169"/><circle class="cls-3" cx="66" cy="61" r="18"/><circle class="cls-4" cx="116" cy="61" r="18"/><circle class="cls-5" cx="166" cy="61" r="18"/><polygon class="cls-2" points="208 115 252 41 456 41 497 112 208 115"/><rect class="cls-6" x="192" y="129" width="1138" height="90" rx="12" ry="12"/><path class="cls-7" d="M715.5,173.75c0,114.74-93,207.75-207.75,207.75"/><polygon class="cls-3" points="715.33 158 695.7 192 734.96 192 715.33 158"/></svg>`);
+  node.append(`<svg id="Layer_1" data-name="Layer 1" xmlns="https://www.w3.org/2000/svg" viewBox="0 0 1476 399"><defs><style>.cls-1{fill:#d8d8d8;}.cls-2{fill:#e1e7ec;}.cls-3{fill:#eb423e;}.cls-4{fill:#fbb03b;}.cls-5{fill:#7ac943;}.cls-6{fill:#fff;}.cls-7{fill:none;stroke:#eb423e;stroke-miterlimit:10;stroke-width:5px;}</style></defs><title>sb</title><rect class="cls-1" x="18" y="15" width="1438" height="159" rx="12" ry="12"/><rect class="cls-2" x="18" y="105" width="1437" height="169"/><circle class="cls-3" cx="66" cy="61" r="18"/><circle class="cls-4" cx="116" cy="61" r="18"/><circle class="cls-5" cx="166" cy="61" r="18"/><polygon class="cls-2" points="208 115 252 41 456 41 497 112 208 115"/><rect class="cls-6" x="192" y="129" width="1138" height="90" rx="12" ry="12"/><path class="cls-7" d="M715.5,173.75c0,114.74-93,207.75-207.75,207.75"/><polygon class="cls-3" points="715.33 158 695.7 192 734.96 192 715.33 158"/></svg>`);
   return node;
 }
 
@@ -271,7 +270,6 @@ function renderClaimedEnvelope (index) {
     });
   })
 }
-
 
 /***************************************************
   BUILD ENVELOPE COMPONENTS
@@ -315,7 +313,7 @@ function buildEnvelope (env, step) {
   let epochId = Date.now();
   envInfo.addClass('envelope-info-area');
   envInfo.append(claimButton);
-  envInfo.append(`<svg class="envelope-info-bg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 342 183"><defs><style>.envelope-1{fill:url(#envelope-linear-gradient-${epochId});}</style><linearGradient id="envelope-linear-gradient-${epochId}" x1="171.5" y1="10" x2="171.5" y2="176.5" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#f85947"/><stop offset="0.43" stop-color="#f65546"/><stop offset="0.81" stop-color="#f04b41"/><stop offset="1" stop-color="#eb423e"/></linearGradient></defs><path class="envelope-1" d="M334,111.58V22a12,12,0,0,0-12-12H21A12,12,0,0,0,9,22v88.08L170.5,176.5Z"/></svg>`);
+  envInfo.append(`<svg class="envelope-info-bg" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink" viewBox="0 0 342 183"><defs><style>.envelope-1{fill:url(#envelope-linear-gradient-${epochId});}</style><linearGradient id="envelope-linear-gradient-${epochId}" x1="171.5" y1="10" x2="171.5" y2="176.5" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#f85947"/><stop offset="0.43" stop-color="#f65546"/><stop offset="0.81" stop-color="#f04b41"/><stop offset="1" stop-color="#eb423e"/></linearGradient></defs><path class="envelope-1" d="M334,111.58V22a12,12,0,0,0-12-12H21A12,12,0,0,0,9,22v88.08L170.5,176.5Z"/></svg>`);
   envInfo.append(`<div class="envelope-balance-text">${remainingBalanceEth} Ξ</div>`);
   envInfo.append(`<p><strong>${remainingBalanceGwei} GWEI</strong></p>`);
 
@@ -358,7 +356,7 @@ window.addEventListener('load', () => {
 
   // Checking if Web3 has been injected by the browser (Mist/MetaMask)
   if (typeof web3 !== 'undefined') {
-    console.warn(`Using web3 detected from external source. If you find that your accounts don't appear or you have 0 MetaCoin, ensure you've configured that source properly. If using MetaMask, see the following link. Feel free to delete this warning. :) http://truffleframework.com/tutorials/truffle-and-metamask`);
+    console.warn(`Using web3 detected from external source. If you find that your accounts don't appear or you have 0 MetaCoin, ensure you've configured that source properly. If using MetaMask, see the following link. Feel free to delete this warning. :) https://truffleframework.com/tutorials/truffle-and-metamask`);
     // Use Mist/MetaMask's provider
     window.web3 = new Web3(web3.currentProvider);
     $('#metamask-info-area').html(buildMetamaskInfo('detected'));
